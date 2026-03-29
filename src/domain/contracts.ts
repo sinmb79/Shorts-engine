@@ -35,6 +35,8 @@ export interface EngineStyle {
 export interface EngineBackend {
   preferred_engine: PreferredEngine;
   allow_fallback: boolean;
+  batch_size?: number;
+  gpu_available?: boolean;
 }
 
 export interface EngineOutput {

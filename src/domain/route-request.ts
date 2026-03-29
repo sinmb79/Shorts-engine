@@ -30,16 +30,23 @@ export function routeRequest(
     reasonCodes.push("candidate_score_below_premium_threshold");
   }
 
-  const selectedBackend = chooseBackend(
+  const { batch_size, gpu_available } = request.base.backend;
+  const ruleCTriggered =
+    typeof batch_size === "number" &&
+    batch_size >= 5 &&
+    gpu_available === true;
+
+  let selectedBackend = chooseBackend(
     request.base.backend.preferred_engine,
     premiumAllowed,
   );
 
-  if (selectedBackend === "local") {
+  if (ruleCTriggered) {
+    selectedBackend = "gpu";
+    reasonCodes.push("batch_gpu_preferred");
+  } else if (selectedBackend === "local") {
     reasonCodes.push("local_backend_available");
-  }
-
-  if (selectedBackend === "premium") {
+  } else if (selectedBackend === "premium") {
     reasonCodes.push("premium_allowed_for_high_value_step");
   }
 

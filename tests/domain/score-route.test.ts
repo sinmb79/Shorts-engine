@@ -42,3 +42,13 @@ test("disables fallback backend when the request forbids fallback", async () => 
   assert.equal(routing.selected_backend, "local");
   assert.equal(routing.fallback_backend, null);
 });
+
+test("routes to gpu when batch_size >= 5 and gpu_available is true", async () => {
+  const request = await loadFixture<EngineRequest>("batch-gpu-request.json");
+  const normalized = normalizeRequest(request);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.equal(routing.selected_backend, "gpu");
+  assert.match(routing.reason_codes.join(","), /batch_gpu_preferred/);
+});
