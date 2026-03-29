@@ -13,6 +13,7 @@ import { renderEngineCommand } from "./render-engine-command.js";
 import { runEngineCommand } from "./run-engine-command.js";
 import { wizardEngineCommand } from "./wizard-engine-command.js";
 import { executeEngineCommand } from "./execute-engine-command.js";
+import { ttsEngineCommand } from "./tts-engine-command.js";
 
 const args = process.argv.slice(2);
 const [command, ...rest] = args;
@@ -23,7 +24,7 @@ const simulate = flags.includes("--simulate");
 
 if (!command) {
   process.stderr.write(
-    "Usage: engine <run|prompt|create|wizard|execute|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+    "Usage: engine <run|prompt|create|wizard|execute|tts|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
   );
   process.exit(EXIT_CODE_INTERNAL_ERROR);
 }
@@ -63,6 +64,17 @@ async function executeCommand(
     return executeEngineCommand(requestPath, { json: options.json, dry_run: options.dry_run });
   }
 
+  if (commandName === "tts") {
+    const [requestPath] = positionals;
+    if (!requestPath) {
+      return {
+        exitCode: EXIT_CODE_INTERNAL_ERROR,
+        output: "Usage: engine tts <request.json> [--dry-run] [--json]\n",
+      };
+    }
+    return ttsEngineCommand(requestPath, { json: options.json, dry_run: options.dry_run });
+  }
+
   if (commandName === "create") {
     const [profileId, outputPath] = positionals;
 
@@ -88,7 +100,7 @@ async function executeCommand(
   ) {
     return {
       exitCode: EXIT_CODE_INTERNAL_ERROR,
-      output: "Usage: engine <run|prompt|create|wizard|execute|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+      output: "Usage: engine <run|prompt|create|wizard|execute|tts|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
     };
   }
 
