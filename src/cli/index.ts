@@ -12,6 +12,7 @@ import { publishEngineCommand } from "./publish-engine-command.js";
 import { renderEngineCommand } from "./render-engine-command.js";
 import { runEngineCommand } from "./run-engine-command.js";
 import { wizardEngineCommand } from "./wizard-engine-command.js";
+import { executeEngineCommand } from "./execute-engine-command.js";
 
 const args = process.argv.slice(2);
 const [command, ...rest] = args;
@@ -22,19 +23,20 @@ const simulate = flags.includes("--simulate");
 
 if (!command) {
   process.stderr.write(
-    "Usage: engine <run|prompt|create|wizard|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+    "Usage: engine <run|prompt|create|wizard|execute|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
   );
   process.exit(EXIT_CODE_INTERNAL_ERROR);
 }
 
-const result = await executeCommand(command, positionals, { json, simulate });
+const dry_run = flags.includes("--dry-run");
+const result = await executeCommand(command, positionals, { json, simulate, dry_run });
 process.stdout.write(result.output);
 process.exit(result.exitCode);
 
 async function executeCommand(
   commandName: string,
   positionals: string[],
-  options: { json: boolean; simulate: boolean },
+  options: { json: boolean; simulate: boolean; dry_run: boolean },
 ) {
   if (commandName === "config") {
     return configEngineCommand({ json: options.json });
@@ -48,6 +50,17 @@ async function executeCommand(
     const [outputPath] = positionals;
     const resolvedPath = outputPath ?? "my-request.json";
     return wizardEngineCommand(resolvedPath);
+  }
+
+  if (commandName === "execute") {
+    const [requestPath] = positionals;
+    if (!requestPath) {
+      return {
+        exitCode: EXIT_CODE_INTERNAL_ERROR,
+        output: "Usage: engine execute <request.json> [--dry-run] [--json]\n",
+      };
+    }
+    return executeEngineCommand(requestPath, { json: options.json, dry_run: options.dry_run });
   }
 
   if (commandName === "create") {
@@ -75,7 +88,7 @@ async function executeCommand(
   ) {
     return {
       exitCode: EXIT_CODE_INTERNAL_ERROR,
-      output: "Usage: engine <run|prompt|create|wizard|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+      output: "Usage: engine <run|prompt|create|wizard|execute|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
     };
   }
 
