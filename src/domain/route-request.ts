@@ -1,0 +1,81 @@
+import type {
+  NormalizedRequest,
+  PreferredEngine,
+  RoutingDecision,
+  ScoringResult,
+} from "./contracts.js";
+
+export function routeRequest(
+  request: NormalizedRequest,
+  scoring: ScoringResult,
+): RoutingDecision {
+  const reasonCodes: string[] = [];
+  const allowFallback = request.base.backend.allow_fallback;
+
+  if (request.base.backend.preferred_engine === "cache") {
+    reasonCodes.push("cache_hit");
+
+    return {
+      selected_backend: "cache",
+      fallback_backend: allowFallback ? "local" : null,
+      premium_allowed: false,
+      reason_codes: reasonCodes,
+    };
+  }
+
+  const premiumAllowed =
+    request.derived.premium_allowed && scoring.candidate_score >= 0.6;
+
+  if (!premiumAllowed) {
+    reasonCodes.push("candidate_score_below_premium_threshold");
+  }
+
+  const selectedBackend = chooseBackend(
+    request.base.backend.preferred_engine,
+    premiumAllowed,
+  );
+
+  if (selectedBackend === "local") {
+    reasonCodes.push("local_backend_available");
+  }
+
+  if (selectedBackend === "premium") {
+    reasonCodes.push("premium_allowed_for_high_value_step");
+  }
+
+  return {
+    selected_backend: selectedBackend,
+    fallback_backend: allowFallback ? chooseFallbackBackend(selectedBackend) : null,
+    premium_allowed: premiumAllowed,
+    reason_codes: reasonCodes,
+  };
+}
+
+function chooseBackend(
+  preferredEngine: PreferredEngine,
+  premiumAllowed: boolean,
+): RoutingDecision["selected_backend"] {
+  if (preferredEngine === "local") {
+    return "local";
+  }
+
+  if (preferredEngine === "gpu") {
+    return "gpu";
+  }
+
+  if (preferredEngine === "sora" || preferredEngine === "premium") {
+    return premiumAllowed ? "premium" : "local";
+  }
+
+  return "local";
+}
+
+function chooseFallbackBackend(
+  selectedBackend: RoutingDecision["selected_backend"],
+): Exclude<RoutingDecision["fallback_backend"], null> {
+  if (selectedBackend === "cache" || selectedBackend === "gpu") {
+    return "local";
+  }
+
+  return "gpu";
+}
