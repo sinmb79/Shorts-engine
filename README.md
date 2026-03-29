@@ -239,12 +239,50 @@ npm test
 
 ---
 
+## 전체 제작 파이프라인
+
+아래 순서로 명령어를 실행하면 기획부터 업로드까지 전 과정을 자동화할 수 있습니다.
+
+```
+1. wizard     → 요청 파일 생성 (대화형)
+2. run        → 전체 기획 계획 생성 (플랫폼 스펙, 모션, B-roll 등)
+3. execute    → 영상 생성 어댑터 호출 (Sora / Runway / Kling)
+4. tts        → 음성 합성 어댑터 호출 (ElevenLabs / OpenAI / Google TTS)
+5. upload     → 플랫폼 업로드 어댑터 호출 (YouTube / TikTok / Instagram)
+```
+
+**예시 (전체 흐름):**
+
+```bash
+# 1. 요청 파일 생성
+npm run engine -- wizard my-video.json
+
+# 2. 기획 계획 확인
+npm run engine -- run my-video.json
+
+# 3. 영상 생성 (API 키 없으면 dry_run으로 동작)
+npm run engine -- execute my-video.json --dry-run
+
+# 4. 음성 합성
+npm run engine -- tts my-video.json --dry-run
+
+# 5. 플랫폼 업로드
+npm run engine -- upload my-video.json output.mp4 --dry-run
+```
+
+---
+
 ## 프로젝트 구조
 
 ```
 src/
   cli/          명령줄 인터페이스 (명령어 처리)
   domain/       핵심 비즈니스 로직 (검증, 정규화, 라우팅)
+  adapters/
+    video/      영상 생성 어댑터 (local / sora / runway / kling)
+    tts/        음성 합성 어댑터 (local / elevenlabs / openai / google)
+    upload/     플랫폼 업로드 어댑터 (local / youtube / tiktok / instagram)
+  execute/      어댑터 오케스트레이터 (영상·TTS·업로드 실행)
   platform/     플랫폼별 영상 규격 (유튜브, 틱톡, 릴스)
   motion/       카메라 모션 패턴 규칙
   broll/        B-roll 시맨틱 매핑
@@ -288,50 +326,64 @@ tests/
 
 ---
 
-## 영상 생성 API 연동 방법
+## API 키 설정 방법
 
-`.env.example`을 복사하여 `.env` 파일을 만들고 API 키를 입력하세요:
+`.env.example`을 복사하여 `.env` 파일을 만들고, 사용하려는 서비스의 API 키를 입력하세요.
 
 ```bash
 cp .env.example .env
-# .env 파일을 열어 API 키 입력
+# .env 파일을 텍스트 편집기로 열어 API 키 입력
 ```
 
-그 다음 아래 명령어로 실행합니다:
+**API 키가 없어도 괜찮습니다.** 키가 없는 경우 자동으로 `local` 어댑터(dry_run 모드)로 동작합니다.
+
+---
+
+### 영상 생성 API
+
+| 서비스 | 환경변수 | 발급 주소 |
+|--------|----------|-----------|
+| Sora | `SORA_API_KEY` | https://openai.com/sora |
+| Runway | `RUNWAY_API_KEY` | https://runwayml.com |
+| Kling | `KLING_API_KEY` | https://klingai.com |
 
 ```bash
 npm run engine -- execute my-request.json           # 실제 API 호출
 npm run engine -- execute my-request.json --dry-run # 테스트 (API 호출 없음)
 ```
 
-API 키가 없으면 자동으로 `local` 어댑터(dry_run)로 동작합니다.
-
 ---
 
-## TTS 음성 합성 API 연동 방법
+### TTS 음성 합성 API
 
-`.env` 파일에 TTS API 키를 추가하세요 (`.env.example` 참고):
+| 서비스 | 환경변수 | 발급 주소 |
+|--------|----------|-----------|
+| ElevenLabs | `ELEVENLABS_API_KEY` | https://elevenlabs.io |
+| OpenAI TTS | `OPENAI_API_KEY` | https://platform.openai.com |
+| Google TTS | `GOOGLE_TTS_API_KEY` | https://cloud.google.com/text-to-speech |
 
 ```bash
 npm run engine -- tts my-request.json           # 실제 TTS API 호출
 npm run engine -- tts my-request.json --dry-run # 테스트 (API 호출 없음)
 ```
 
-API 키가 없으면 자동으로 `local` 어댑터(dry_run)로 동작합니다.
 나레이션 대본은 요청 파일의 `topic`, `goal`, `emotion`을 조합해 자동 생성됩니다.
 
 ---
 
-## 플랫폼 업로드 API 연동 방법
+### 플랫폼 업로드 API
 
-`.env` 파일에 업로드 API 토큰을 추가하세요 (`.env.example` 참고):
+| 서비스 | 환경변수 | 발급 주소 |
+|--------|----------|-----------|
+| YouTube | `YOUTUBE_CLIENT_ID` + `YOUTUBE_REFRESH_TOKEN` | https://developers.google.com/youtube/v3 |
+| TikTok | `TIKTOK_ACCESS_TOKEN` | https://developers.tiktok.com |
+| Instagram | `INSTAGRAM_ACCESS_TOKEN` + `INSTAGRAM_ACCOUNT_ID` | https://developers.facebook.com/docs/instagram-api |
 
 ```bash
 npm run engine -- upload my-request.json video.mp4           # 실제 플랫폼 업로드
 npm run engine -- upload my-request.json video.mp4 --dry-run # 테스트 (업로드 없음)
 ```
 
-API 토큰이 없으면 자동으로 `local` 어댑터(dry_run)로 동작합니다.
 업로드 제목, 설명, 해시태그는 요청 파일의 `topic`, `goal`, `theme`을 조합해 자동 생성됩니다.
 
 ---

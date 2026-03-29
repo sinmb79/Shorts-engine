@@ -34,3 +34,6 @@ credentials/
 *.pfx
 *.crt
 docs/superpowers/
+*.execute-result.json
+*.tts-result.json
+*.upload-result.json
