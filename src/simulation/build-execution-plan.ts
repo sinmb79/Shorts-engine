@@ -1,7 +1,9 @@
 import type {
+  ExecutionBackend,
   ExecutionPlan,
   ExecutionPlanNode,
   NormalizedRequest,
+  PremiumAllowedStep,
   RoutingDecision,
 } from "../domain/contracts.js";
 
@@ -31,14 +33,14 @@ export function buildExecutionPlan(
     createNode(
       "tool_adapter",
       "adapter",
-      routing.selected_backend,
+      resolveNodeBackend("final_script_refinement", routing),
       0.02,
       2,
       formatterFallbackNode,
       false,
       "error",
     ),
-    createNode("formatter", "formatter", "local", 0.01, 2, null, false, "warning"),
+    createNode("formatter", "formatter", routing.selected_backend === "premium" ? "local" : routing.selected_backend, 0.01, 2, null, false, "warning"),
     createNode(
       "quality_checker",
       "quality",
@@ -52,23 +54,26 @@ export function buildExecutionPlan(
     createNode(
       "tts_candidate",
       "candidate",
-      routing.selected_backend,
+      resolveNodeBackend("premium_tts", routing),
       request.base.constraints.budget_tier === "low" ? 0.05 : 0.08,
       1,
       ttsFallbackNode,
       true,
       "warning",
     ),
-    createNode(
-      "video_candidate",
-      "candidate",
-      routing.selected_backend,
-      routing.selected_backend === "premium" ? 0.2 : 0.08,
-      routing.selected_backend === "premium" ? 1 : 2,
-      videoFallbackNode,
-      false,
-      "error",
-    ),
+    ((): ExecutionPlanNode => {
+      const videoBackend = resolveNodeBackend("high_value_video_generation", routing);
+      return createNode(
+        "video_candidate",
+        "candidate",
+        videoBackend,
+        videoBackend === "premium" ? 0.2 : 0.08,
+        videoBackend === "premium" ? 1 : 2,
+        videoFallbackNode,
+        false,
+        "error",
+      );
+    })(),
   ];
 
   const fallbackNodes = buildFallbackNodes(videoFallbackNode, routing.fallback_backend);
@@ -99,6 +104,20 @@ export function buildExecutionPlan(
   }
 
   return { nodes, edges };
+}
+
+function resolveNodeBackend(
+  stepType: PremiumAllowedStep | null,
+  routing: RoutingDecision,
+): ExecutionBackend {
+  if (
+    stepType !== null &&
+    routing.premium_allowed_steps.includes(stepType) &&
+    routing.selected_backend === "premium"
+  ) {
+    return "premium";
+  }
+  return routing.selected_backend === "premium" ? "local" : routing.selected_backend;
 }
 
 function buildFallbackNodes(

@@ -1,5 +1,6 @@
 import type {
   NormalizedRequest,
+  PremiumAllowedStep,
   PreferredEngine,
   RoutingDecision,
   ScoringResult,
@@ -19,6 +20,7 @@ export function routeRequest(
       selected_backend: "cache",
       fallback_backend: allowFallback ? "local" : null,
       premium_allowed: false,
+      premium_allowed_steps: [],
       reason_codes: reasonCodes,
     };
   }
@@ -47,13 +49,18 @@ export function routeRequest(
   } else if (selectedBackend === "local") {
     reasonCodes.push("local_backend_available");
   } else if (selectedBackend === "premium") {
-    reasonCodes.push("premium_allowed_for_high_value_step");
+    reasonCodes.push("premium_allowed_for_final_value_steps");
   }
+
+  const premiumAllowedSteps: PremiumAllowedStep[] = premiumAllowed
+    ? ["final_script_refinement", "premium_tts", "high_value_video_generation", "final_polish"]
+    : [];
 
   return {
     selected_backend: selectedBackend,
     fallback_backend: allowFallback ? chooseFallbackBackend(selectedBackend) : null,
     premium_allowed: premiumAllowed,
+    premium_allowed_steps: premiumAllowedSteps,
     reason_codes: reasonCodes,
   };
 }

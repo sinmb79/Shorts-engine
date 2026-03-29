@@ -80,3 +80,31 @@ test("Rule C does not trigger when batch_size is below threshold", async () => {
   assert.notEqual(routing.selected_backend, "gpu");
   assert.doesNotMatch(routing.reason_codes.join(","), /batch_gpu_preferred/);
 });
+
+test("premium_allowed_steps is populated when premium is allowed", async () => {
+  const request: EngineRequest = {
+    version: "0.1",
+    intent: { topic: "t", subject: "s", goal: "g", emotion: "e", platform: "youtube_shorts", theme: "th", duration_sec: 30 },
+    constraints: { language: "en", budget_tier: "high", quality_tier: "premium", visual_consistency_required: true, content_policy_safe: true },
+    style: { hook_type: "curiosity", pacing_profile: "fast_cut", caption_style: "tiktok_viral", camera_language: "simple_push_in" },
+    backend: { preferred_engine: "sora", allow_fallback: true },
+    output: { type: "video_prompt" },
+  };
+  const normalized = normalizeRequest(request);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.equal(routing.premium_allowed, true);
+  assert.ok(routing.premium_allowed_steps.includes("premium_tts"));
+  assert.ok(routing.premium_allowed_steps.includes("high_value_video_generation"));
+});
+
+test("premium_allowed_steps is empty when premium is blocked", async () => {
+  const request = await loadFixture<EngineRequest>("premium-blocked-request.json");
+  const normalized = normalizeRequest(request);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.equal(routing.premium_allowed, false);
+  assert.equal(routing.premium_allowed_steps.length, 0);
+});

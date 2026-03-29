@@ -35,3 +35,46 @@ test("only references fallback nodes that exist in the plan", async () => {
     }
   }
 });
+
+test("Rule D: tts_candidate and video_candidate use premium backend when premium_allowed_steps is populated", async () => {
+  const request: EngineRequest = {
+    version: "0.1",
+    intent: { topic: "t", subject: "s", goal: "g", emotion: "e", platform: "youtube_shorts", theme: "th", duration_sec: 30 },
+    constraints: { language: "en", budget_tier: "high", quality_tier: "premium", visual_consistency_required: true, content_policy_safe: true },
+    style: { hook_type: "curiosity", pacing_profile: "fast_cut", caption_style: "tiktok_viral", camera_language: "simple_push_in" },
+    backend: { preferred_engine: "sora", allow_fallback: true },
+    output: { type: "video_prompt" },
+  };
+  const normalized = normalizeRequest(request);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.equal(routing.selected_backend, "premium", "test requires premium backend");
+  assert.ok(routing.premium_allowed_steps.includes("premium_tts"));
+  assert.ok(routing.premium_allowed_steps.includes("high_value_video_generation"));
+  assert.ok(routing.premium_allowed_steps.includes("final_script_refinement"));
+
+  const plan = buildExecutionPlan(normalized, routing);
+  const nodeMap = new Map(plan.nodes.map((n) => [n.node_id, n]));
+
+  assert.equal(nodeMap.get("tts_candidate")?.backend, "premium");
+  assert.equal(nodeMap.get("video_candidate")?.backend, "premium");
+  assert.equal(nodeMap.get("tool_adapter")?.backend, "premium");
+  assert.notEqual(nodeMap.get("formatter")?.backend, "premium");
+});
+
+test("Rule D: tts_candidate and video_candidate do not use premium backend when premium_allowed_steps is empty", async () => {
+  const request = await loadFixture<EngineRequest>("premium-blocked-request.json");
+  const normalized = normalizeRequest(request);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.equal(routing.premium_allowed_steps.length, 0);
+
+  const plan = buildExecutionPlan(normalized, routing);
+  const nodeMap = new Map(plan.nodes.map((n) => [n.node_id, n]));
+
+  assert.notEqual(nodeMap.get("tts_candidate")?.backend, "premium");
+  assert.notEqual(nodeMap.get("video_candidate")?.backend, "premium");
+  assert.notEqual(nodeMap.get("tool_adapter")?.backend, "premium");
+});
