@@ -1,7 +1,7 @@
 export interface VideoGenerationPrompt {
   text_prompt: string;
   duration_sec: number;
-  aspect_ratio: string;
+  aspect_ratio: "9:16";
   style_tags: string[];
   motion_notes?: string;
 }
