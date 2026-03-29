@@ -52,3 +52,31 @@ test("routes to gpu when batch_size >= 5 and gpu_available is true", async () =>
   assert.equal(routing.selected_backend, "gpu");
   assert.match(routing.reason_codes.join(","), /batch_gpu_preferred/);
 });
+
+test("Rule C triggers at exact boundary batch_size === 5", async () => {
+  const request = await loadFixture<EngineRequest>("batch-gpu-request.json");
+  const atBoundary: EngineRequest = {
+    ...request,
+    backend: { ...request.backend, batch_size: 5 },
+  };
+  const normalized = normalizeRequest(atBoundary);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.equal(routing.selected_backend, "gpu");
+  assert.match(routing.reason_codes.join(","), /batch_gpu_preferred/);
+});
+
+test("Rule C does not trigger when batch_size is below threshold", async () => {
+  const request = await loadFixture<EngineRequest>("batch-gpu-request.json");
+  const belowThreshold: EngineRequest = {
+    ...request,
+    backend: { ...request.backend, batch_size: 4 },
+  };
+  const normalized = normalizeRequest(belowThreshold);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(normalized, scoring);
+
+  assert.notEqual(routing.selected_backend, "gpu");
+  assert.doesNotMatch(routing.reason_codes.join(","), /batch_gpu_preferred/);
+});

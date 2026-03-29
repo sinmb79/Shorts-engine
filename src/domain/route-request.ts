@@ -80,6 +80,7 @@ function chooseBackend(
 function chooseFallbackBackend(
   selectedBackend: RoutingDecision["selected_backend"],
 ): Exclude<RoutingDecision["fallback_backend"], null> {
+  // "gpu" here covers both explicit gpu preference and Rule C batch override.
   if (selectedBackend === "cache" || selectedBackend === "gpu") {
     return "local";
   }
