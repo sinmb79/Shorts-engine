@@ -12,10 +12,15 @@ export function simulateRecovery(plan: ExecutionPlan): RecoverySimulation {
     .map<RecoveryPath>((node) => ({
       trigger_node: node.node_id,
       failure_code: inferFailureCode(node.node_id),
-      attempts: [
-        ...(node.retry_count > 0 ? [`retry:${node.node_id}:x${node.retry_count}`] : []),
-        `fallback:${node.fallback_node}`,
-      ],
+      attempts: (() => {
+        const retryWorthIt = node.retry_count > 0 && node.retry_cost <= node.cost_efficiency_score;
+        const retryBlocked = node.retry_count > 0 && node.retry_cost > node.cost_efficiency_score;
+        return [
+          ...(retryWorthIt ? [`retry:${node.node_id}:x${node.retry_count}`] : []),
+          ...(retryBlocked ? [`skip_retry:cost_exceeds_value`] : []),
+          `fallback:${node.fallback_node}`,
+        ];
+      })(),
       final_status: node.skip_allowed ? "partial_success" : "success_with_fallback",
     }));
 
