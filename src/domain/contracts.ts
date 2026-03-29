@@ -5,7 +5,7 @@ export type BudgetTier = "low" | "balanced" | "high";
 export type QualityTier = "low" | "balanced" | "premium";
 
 export type PreferredEngine = "cache" | "local" | "gpu" | "sora" | "premium";
-export type ExecutionBackend = "cache" | "local" | "gpu" | "premium";
+export type ExecutionBackend = "cache" | "local" | "gpu" | "sora" | "premium";
 
 export interface EngineIntent {
   topic: string;
