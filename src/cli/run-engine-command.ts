@@ -72,6 +72,8 @@ export async function runEngineCommand(
       ),
     };
   } catch (error) {
+    // rawRequest is not in scope here (file read or JSON parse failed),
+    // so schema_version cannot be extracted from the request.
     const result = createRunResult(
       requestId,
       "0.1",
