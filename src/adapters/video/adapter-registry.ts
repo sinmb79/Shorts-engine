@@ -5,6 +5,8 @@ import { LocalAdapter } from "./local-adapter.js";
 import { RunwayAdapter } from "./runway-adapter.js";
 import { SoraAdapter } from "./sora-adapter.js";
 
+// ADAPTER_REGISTRY includes "runway" and "kling" for internal use by the "premium"
+// cascade in resolveAdapter. They are not direct ExecutionBackend values.
 export const ADAPTER_REGISTRY: Record<string, VideoGenerationAdapter> = {
   local: new LocalAdapter(),
   sora: new SoraAdapter(),

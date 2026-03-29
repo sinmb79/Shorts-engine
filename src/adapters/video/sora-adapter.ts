@@ -13,7 +13,7 @@ export class SoraAdapter implements VideoGenerationAdapter {
   }
 
   async generate(
-    _prompt: VideoGenerationPrompt,
+    prompt: VideoGenerationPrompt,
     options: VideoGenerationOptions,
   ): Promise<VideoGenerationResult> {
     if (options.dry_run) {
