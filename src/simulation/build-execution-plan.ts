@@ -40,7 +40,7 @@ export function buildExecutionPlan(
       false,
       "error",
     ),
-    createNode("formatter", "formatter", routing.selected_backend === "premium" ? "local" : routing.selected_backend, 0.01, 2, null, false, "warning"),
+    createNode("formatter", "formatter", resolveNonPremiumBackend(routing), 0.01, 2, null, false, "warning"),
     createNode(
       "quality_checker",
       "quality",
@@ -74,6 +74,16 @@ export function buildExecutionPlan(
         "error",
       );
     })(),
+    createNode(
+      "final_polish",
+      "formatter",
+      resolveNodeBackend("final_polish", routing),
+      0.01,
+      1,
+      null,
+      true,
+      "warning",
+    ),
   ];
 
   const fallbackNodes = buildFallbackNodes(videoFallbackNode, routing.fallback_backend);
@@ -85,6 +95,7 @@ export function buildExecutionPlan(
     ["formatter", "quality_checker"],
     ["quality_checker", "tts_candidate"],
     ["tts_candidate", "video_candidate"],
+    ["video_candidate", "final_polish"],
   ];
 
   if (formatterFallbackNode !== null) {
@@ -107,16 +118,19 @@ export function buildExecutionPlan(
 }
 
 function resolveNodeBackend(
-  stepType: PremiumAllowedStep | null,
+  stepType: PremiumAllowedStep,
   routing: RoutingDecision,
 ): ExecutionBackend {
   if (
-    stepType !== null &&
     routing.premium_allowed_steps.includes(stepType) &&
     routing.selected_backend === "premium"
   ) {
     return "premium";
   }
+  return resolveNonPremiumBackend(routing);
+}
+
+function resolveNonPremiumBackend(routing: RoutingDecision): ExecutionBackend {
   return routing.selected_backend === "premium" ? "local" : routing.selected_backend;
 }
 

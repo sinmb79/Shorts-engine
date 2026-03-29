@@ -61,6 +61,7 @@ test("Rule D: tts_candidate and video_candidate use premium backend when premium
   assert.equal(nodeMap.get("video_candidate")?.backend, "premium");
   assert.equal(nodeMap.get("tool_adapter")?.backend, "premium");
   assert.notEqual(nodeMap.get("formatter")?.backend, "premium");
+  assert.equal(nodeMap.get("final_polish")?.backend, "premium");
 });
 
 test("Rule D: tts_candidate and video_candidate do not use premium backend when premium_allowed_steps is empty", async () => {

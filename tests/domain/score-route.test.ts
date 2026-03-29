@@ -95,8 +95,11 @@ test("premium_allowed_steps is populated when premium is allowed", async () => {
   const routing = routeRequest(normalized, scoring);
 
   assert.equal(routing.premium_allowed, true);
+  assert.equal(routing.premium_allowed_steps.length, 4);
   assert.ok(routing.premium_allowed_steps.includes("premium_tts"));
   assert.ok(routing.premium_allowed_steps.includes("high_value_video_generation"));
+  assert.ok(routing.premium_allowed_steps.includes("final_script_refinement"));
+  assert.ok(routing.premium_allowed_steps.includes("final_polish"));
 });
 
 test("premium_allowed_steps is empty when premium is blocked", async () => {
