@@ -112,7 +112,7 @@ function validateBackend(value: unknown) {
     return [missingField("backend")];
   }
 
-  return [
+  const errors = [
     ...validateEnum(
       value.preferred_engine,
       "backend.preferred_engine",
@@ -120,6 +120,16 @@ function validateBackend(value: unknown) {
     ),
     ...validateBoolean(value.allow_fallback, "backend.allow_fallback"),
   ];
+
+  if (value.batch_size !== undefined) {
+    errors.push(...validatePositiveInteger(value.batch_size, "backend.batch_size"));
+  }
+
+  if (value.gpu_available !== undefined) {
+    errors.push(...validateBoolean(value.gpu_available, "backend.gpu_available"));
+  }
+
+  return errors;
 }
 
 function validateOutput(value: unknown) {
@@ -186,6 +196,14 @@ function validateNumber(value: unknown, field: string, allowZero = false) {
     Number.isFinite(value) &&
     (allowZero ? value >= 0 : value > 0)
   ) {
+    return [];
+  }
+
+  return [missingField(field)];
+}
+
+function validatePositiveInteger(value: unknown, field: string) {
+  if (typeof value === "number" && Number.isInteger(value) && value > 0) {
     return [];
   }
 

@@ -9,6 +9,10 @@ import { loadEngineRequest } from "./load-engine-request.js";
 import { renderOutput } from "./render-output.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 export async function runEngineCommand(
   requestPath: string,
   options: { json: boolean; simulate: boolean },
@@ -23,7 +27,13 @@ export async function runEngineCommand(
       return {
         exitCode: EXIT_CODE_VALIDATION_FAILURE,
         output: renderOutput(
-          createRunResult(requestId, "0.1", loaded.validation, null, null, null, null, null, null, null, null, null, null),
+          createRunResult(
+            requestId,
+            isRecord(loaded.raw_request) && typeof loaded.raw_request['version'] === 'string'
+              ? loaded.raw_request['version']
+              : '0.1',
+            loaded.validation, null, null, null, null, null, null, null, null, null, null,
+          ),
           options.json,
         ),
       };
@@ -53,6 +63,8 @@ export async function runEngineCommand(
       ),
     };
   } catch (error) {
+    // rawRequest is not in scope here (file read or JSON parse failed),
+    // so schema_version cannot be extracted from the request.
     const result = createRunResult(
       requestId,
       "0.1",

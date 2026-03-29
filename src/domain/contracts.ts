@@ -35,6 +35,8 @@ export interface EngineStyle {
 export interface EngineBackend {
   preferred_engine: PreferredEngine;
   allow_fallback: boolean;
+  batch_size?: number;
+  gpu_available?: boolean;
 }
 
 export interface EngineOutput {
@@ -375,10 +377,17 @@ export interface ScoringResult {
   cost_risk_score: number;
 }
 
+export type PremiumAllowedStep =
+  | "final_script_refinement"
+  | "premium_tts"
+  | "high_value_video_generation"
+  | "final_polish";
+
 export interface RoutingDecision {
   selected_backend: ExecutionBackend;
   fallback_backend: Exclude<ExecutionBackend, "cache"> | null;
   premium_allowed: boolean;
+  premium_allowed_steps: PremiumAllowedStep[];
   reason_codes: string[];
 }
 

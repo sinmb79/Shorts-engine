@@ -8,6 +8,11 @@ export function scoreRequest(request: NormalizedRequest): ScoringResult {
         ? 0.14
         : 0.04;
 
+  // qualityScore reflects cost-risk contribution to candidate_score:
+  //   balanced (0.12) > low (0.08) > premium (0.06)
+  // Premium requests carry the highest generation cost risk, so they contribute
+  // least. Low-tier requests lack budget headroom to retry, so they contribute
+  // less than balanced. Balanced is the most cost-efficient operating point.
   const qualityScore =
     request.base.constraints.quality_tier === "premium"
       ? 0.06
