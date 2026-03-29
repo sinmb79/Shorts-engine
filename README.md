@@ -82,10 +82,34 @@ npm run engine -- run tests/fixtures/valid-low-cost-request.json
 npm run engine -- run tests/fixtures/valid-low-cost-request.json --json
 ```
 
+### 처음 시작할 때 — 대화형 설정 마법사
+
+요청 파일을 직접 작성하기 어렵다면 **마법사**를 사용하세요.
+질문에 답하는 것만으로 요청 파일이 자동으로 만들어집니다.
+
+```bash
+npm run engine -- wizard my-request.json
+```
+
+또는 파일 이름을 생략하면 `my-request.json`으로 저장됩니다:
+
+```bash
+npm run engine -- wizard
+```
+
+마법사가 끝나면 아래 명령어로 바로 실행할 수 있습니다:
+
+```bash
+npm run engine -- run my-request.json
+```
+
+---
+
 ### 사용 가능한 모든 명령어
 
 | 명령어 | 설명 |
 |--------|------|
+| `engine wizard [파일]` | **대화형 마법사** — 질문에 답하며 요청 파일 생성 |
 | `engine run <파일>` | 전체 파이프라인 실행 및 결과 출력 |
 | `engine create <프로파일>` | 요청 파일 템플릿 자동 생성 |
 | `engine render <파일>` | 렌더 계획 생성 |
