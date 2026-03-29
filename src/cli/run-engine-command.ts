@@ -1,19 +1,13 @@
-import { readFile } from "node:fs/promises";
-
-import type { EngineRequest, EngineRunResult } from "../domain/contracts.js";
-import { normalizeRequest } from "../domain/normalize-request.js";
-import { routeRequest } from "../domain/route-request.js";
-import { scoreRequest } from "../domain/score-request.js";
-import { validateEngineRequest } from "../domain/request-schema.js";
-import { buildExecutionPlan } from "../simulation/build-execution-plan.js";
-import { simulateRecovery } from "../simulation/simulate-recovery.js";
+import type { EngineRunResult } from "../domain/contracts.js";
 import { createRequestId } from "../shared/request-id.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
   EXIT_CODE_SUCCESS,
   EXIT_CODE_VALIDATION_FAILURE,
 } from "./exit-codes.js";
+import { loadEngineRequest } from "./load-engine-request.js";
 import { renderOutput } from "./render-output.js";
+import { resolvePlanningContext } from "./resolve-planning-context.js";
 
 export async function runEngineCommand(
   requestPath: string,
@@ -22,41 +16,38 @@ export async function runEngineCommand(
   let requestId = createRequestId({ request_path: requestPath });
 
   try {
-    const rawFile = await readFile(requestPath, "utf8");
-    requestId = createRequestId(rawFile);
-    const rawRequest = JSON.parse(rawFile) as unknown;
-    requestId = createRequestId(rawRequest);
-    const validation = validateEngineRequest(rawRequest);
+    const loaded = await loadEngineRequest(requestPath);
+    requestId = loaded.request_id;
 
-    if (!validation.valid) {
+    if (!loaded.validation.valid || !loaded.request) {
       return {
         exitCode: EXIT_CODE_VALIDATION_FAILURE,
         output: renderOutput(
-          createRunResult(requestId, "0.1", validation, null, null, null, null, null),
+          createRunResult(requestId, "0.1", loaded.validation, null, null, null, null, null, null, null, null, null, null),
           options.json,
         ),
       };
     }
 
-    const request = rawRequest as EngineRequest;
-    const normalizedRequest = normalizeRequest(request);
-    const scoring = scoreRequest(normalizedRequest);
-    const routing = routeRequest(normalizedRequest, scoring);
-    const executionPlan = buildExecutionPlan(normalizedRequest, routing);
-    const recoverySimulation = simulateRecovery(executionPlan);
+    const planningContext = resolvePlanningContext(loaded.request);
 
     return {
       exitCode: EXIT_CODE_SUCCESS,
       output: renderOutput(
         createRunResult(
           requestId,
-          request.version,
-          validation,
-          normalizedRequest,
-          scoring,
-          routing,
-          executionPlan,
-          recoverySimulation,
+          loaded.request.version,
+          loaded.validation,
+          planningContext.normalized_request,
+          planningContext.platform_output_spec,
+          planningContext.novel_shorts_plan,
+          planningContext.motion_plan,
+          planningContext.broll_plan,
+          planningContext.learning_state,
+          planningContext.scoring,
+          planningContext.routing,
+          planningContext.execution_plan,
+          planningContext.recovery_simulation,
         ),
         options.json,
       ),
@@ -69,6 +60,11 @@ export async function runEngineCommand(
         valid: false,
         errors: [],
       },
+      null,
+      null,
+      null,
+      null,
+      null,
       null,
       null,
       null,
@@ -99,6 +95,11 @@ function createRunResult(
   schemaVersion: string,
   validation: EngineRunResult["validation"],
   normalizedRequest: EngineRunResult["normalized_request"],
+  platformOutputSpec: EngineRunResult["platform_output_spec"],
+  novelShortsPlan: EngineRunResult["novel_shorts_plan"],
+  motionPlan: EngineRunResult["motion_plan"],
+  brollPlan: EngineRunResult["broll_plan"],
+  learningState: EngineRunResult["learning_state"],
   scoring: EngineRunResult["scoring"],
   routing: EngineRunResult["routing"],
   executionPlan: EngineRunResult["execution_plan"],
@@ -109,6 +110,11 @@ function createRunResult(
     request_id: requestId,
     validation,
     normalized_request: normalizedRequest,
+    platform_output_spec: platformOutputSpec,
+    novel_shorts_plan: novelShortsPlan,
+    motion_plan: motionPlan,
+    broll_plan: brollPlan,
+    learning_state: learningState,
     scoring,
     routing,
     execution_plan: executionPlan,

@@ -50,6 +50,8 @@ function validateRequest(value: unknown) {
     ...validateStyle(value.style),
     ...validateBackend(value.backend),
     ...validateOutput(value.output),
+    ...validateLearningHistory(value.learning_history),
+    ...validateNovelProject(value.novel_project),
   ];
 
   return errors;
@@ -128,6 +130,48 @@ function validateOutput(value: unknown) {
   return validateString(value.type, "output.type");
 }
 
+function validateLearningHistory(value: unknown) {
+  if (typeof value === "undefined") {
+    return [];
+  }
+
+  if (!isRecord(value)) {
+    return [missingField("learning_history")];
+  }
+
+  return [
+    ...validateNumber(value.completed_outputs, "learning_history.completed_outputs", true),
+    ...validateNumber(value.accepted_suggestions, "learning_history.accepted_suggestions", true),
+    ...validateNumber(value.rejected_suggestions, "learning_history.rejected_suggestions", true),
+    ...validateOptionalBoolean(value.has_niche_history, "learning_history.has_niche_history"),
+  ];
+}
+
+function validateNovelProject(value: unknown) {
+  if (typeof value === "undefined") {
+    return [];
+  }
+
+  if (!isRecord(value)) {
+    return [missingField("novel_project")];
+  }
+
+  return [
+    ...validateNovelMode(value.mode, "novel_project.mode"),
+    ...validateNumber(value.episode_number, "novel_project.episode_number", true),
+    ...validateString(value.scene_summary, "novel_project.scene_summary"),
+    ...validateString(value.emotional_peak, "novel_project.emotional_peak"),
+    ...validateRangeNumber(
+      value.cliffhanger_strength,
+      "novel_project.cliffhanger_strength",
+      0,
+      1,
+    ),
+    ...validateString(value.character_focus, "novel_project.character_focus"),
+    ...validateString(value.visual_style_profile, "novel_project.visual_style_profile"),
+  ];
+}
+
 function validateString(value: unknown, field: string) {
   if (typeof value === "string" && value.trim().length > 0) {
     return [];
@@ -136,8 +180,12 @@ function validateString(value: unknown, field: string) {
   return [missingField(field)];
 }
 
-function validateNumber(value: unknown, field: string) {
-  if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+function validateNumber(value: unknown, field: string, allowZero = false) {
+  if (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    (allowZero ? value >= 0 : value > 0)
+  ) {
     return [];
   }
 
@@ -152,8 +200,42 @@ function validateBoolean(value: unknown, field: string) {
   return [missingField(field)];
 }
 
+function validateOptionalBoolean(value: unknown, field: string) {
+  if (typeof value === "undefined" || typeof value === "boolean") {
+    return [];
+  }
+
+  return [missingField(field)];
+}
+
 function validateEnum<T extends string>(value: unknown, field: string, validValues: Set<T>) {
   if (typeof value === "string" && validValues.has(value as T)) {
+    return [];
+  }
+
+  return [missingField(field)];
+}
+
+function validateNovelMode(value: unknown, field: string) {
+  return validateEnum(
+    value,
+    field,
+    new Set(["cliffhanger_short", "character_moment_short", "lore_worldbuilding_short"]),
+  );
+}
+
+function validateRangeNumber(
+  value: unknown,
+  field: string,
+  min: number,
+  max: number,
+) {
+  if (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    value >= min &&
+    value <= max
+  ) {
     return [];
   }
 

@@ -35,6 +35,17 @@ export function normalizeRequest(request: EngineRequest): NormalizedRequest {
         caption_style: request.style.caption_style.trim(),
         camera_language: request.style.camera_language.trim(),
       },
+      ...(request.novel_project
+        ? {
+            novel_project: {
+              ...request.novel_project,
+              character_focus: request.novel_project.character_focus.trim(),
+              emotional_peak: request.novel_project.emotional_peak.trim(),
+              scene_summary: request.novel_project.scene_summary.trim(),
+              visual_style_profile: request.novel_project.visual_style_profile.trim(),
+            },
+          }
+        : {}),
     },
     derived: {
       resolved_platform_profile: request.intent.platform,
