@@ -1,348 +1,291 @@
 # Shorts Engine
 
-Shorts Engine is a simulate-first CLI prototype for short-form video production planning. It does not generate media yet. Instead, it validates a structured request, normalizes it, optionally resolves a novel-to-shorts plan, resolves a platform output spec, generates a motion plan, generates a semantic B-roll plan, resolves a learning state, scores it, chooses a backend route, builds an execution plan, simulates recovery paths, and emits deterministic prompt, analysis, render, and publish artifacts on top of the same planning context.
+**숏폼 영상 제작 자동화를 위한 오픈소스 기획 엔진입니다.**
 
-## Why this project exists
+유튜브 쇼츠, TikTok, 인스타그램 릴스 등 숏폼 영상의 제작 계획을 자동으로 세워주는 CLI 도구입니다.
+실제 영상을 직접 만들지는 않지만, 어떤 영상을 어떻게 만들지에 대한 **전체 제작 계획서**를 JSON 또는 사람이 읽기 쉬운 형태로 출력합니다.
 
-The goal of this repository is to turn an abstract shorts-production engine spec into deterministic execution rules. The first slice focuses on the core engine behavior that should remain stable even when real generation backends are added later:
+---
 
-- request validation
-- normalization
-- platform output policy resolution
-- motion planning rules
-- semantic B-roll planning
-- learning cold-start state resolution
-- novel-to-shorts branching
-- scoring
-- routing
-- execution planning
-- recovery simulation
+## 이 프로젝트가 하는 일
 
-## Current Scope
+요청 파일(JSON) 하나를 넣으면 아래 항목을 자동으로 계산해 줍니다.
 
-- Prompt request schema validation
-- Request normalization with derived fields
-- Platform output spec resolution with automatic duration correction and warnings
-- Deterministic motion planning with segment-aware assignments
-- Deterministic semantic B-roll planning with seed-backed concepts
-- Deterministic learning-state resolution from optional user history
-- Deterministic novel-to-shorts planning with optional episode metadata
-- Deterministic prompt result generation from shared planning context
-- Deterministic request scaffolding from built-in profiles
-- Deterministic environment diagnostics and request analysis
-- Deterministic scoring and routing
-- Execution plan generation with nodes and edges
-- Recovery simulation with normal and fallback paths
-- Deterministic render and publish manifests
-- Human-readable or JSON CLI output across all command families
+| 항목 | 설명 |
+|------|------|
+| **요청 검증** | 입력이 올바른 형식인지 확인 |
+| **정규화** | 입력을 표준 형태로 정리 |
+| **플랫폼 출력 스펙** | 유튜브/틱톡/릴스별 영상 규격 자동 적용 |
+| **소설→숏츠 플래닝** | 소설 에피소드를 숏폼 영상 시나리오로 변환 |
+| **모션 플래닝** | 카메라 움직임 패턴 계획 (반복 방지 규칙 포함) |
+| **B-roll 플래닝** | 장면에 어울리는 보조 영상 클립 추천 |
+| **학습 상태** | 사용 횟수에 따라 개인화 수준 자동 조정 |
+| **비용 라우팅** | 가장 저렴한 백엔드를 자동 선택 (5가지 규칙) |
+| **실행 계획** | 각 노드별 재시도·폴백·비용 계획 생성 |
+| **회복 시뮬레이션** | 오류 발생 시 자동 복구 경로 예측 |
+| **프롬프트 생성** | AI 영상 생성 도구용 프롬프트 자동 작성 |
+| **렌더 계획** | 실제 렌더링 순서와 방법 계획 |
+| **퍼블리시 계획** | 각 플랫폼 업로드용 메타데이터 계획 |
+| **분석 리포트** | 전체 계획 요약 및 품질 점수 |
 
-## What is intentionally not implemented yet
+---
 
-The first MVP does not call real video, TTS, image generation, or platform publish services. It also does not implement:
+## 설치 방법 (처음 하시는 분도 따라 하실 수 있어요)
 
-- render-time motion application
-- real uploader integrations
-- persistent user-state storage
+### 1단계 — Node.js 설치
 
-Persistent personalization is intentionally deferred until there is real user-state storage.
+이 프로젝트를 실행하려면 **Node.js 24 이상**이 필요합니다.
 
-Those are intentionally deferred until the core engine behavior is stable and test-covered.
+1. [https://nodejs.org](https://nodejs.org) 에 접속합니다.
+2. **LTS 버전** 다운로드 버튼을 클릭합니다.
+3. 설치 파일을 실행하고 "Next"를 계속 눌러 설치를 완료합니다.
+4. 터미널(명령 프롬프트 또는 PowerShell)을 열고 아래 명령어로 설치 확인:
 
-## Requirements
+```bash
+node --version
+```
 
-- Node.js 24 or newer
-- npm 11 or newer
+`v24.x.x` 처럼 버전 번호가 나오면 성공입니다.
 
-## Install
+### 2단계 — 이 저장소 다운로드
+
+터미널에서 아래 명령어를 순서대로 실행합니다.
+
+```bash
+git clone https://github.com/sinmb79/Shorts-engine.git
+cd Shorts-engine
+```
+
+> **git이 없다면?** [https://git-scm.com](https://git-scm.com) 에서 Git을 먼저 설치하세요.
+
+### 3단계 — 의존성 설치
 
 ```bash
 npm install
 ```
 
-## Build
+설치가 완료되면 바로 사용하실 수 있습니다.
+
+---
+
+## 사용 방법
+
+### 기본 실행 (사람이 읽기 쉬운 출력)
 
 ```bash
-npm run build
+npm run engine -- run tests/fixtures/valid-low-cost-request.json
 ```
 
-The compiled JavaScript files are written to `dist/`.
-
-## Run the CLI
-
-### Human-readable output
+### JSON 형식으로 출력
 
 ```bash
-npm run run -- run tests/fixtures/valid-low-cost-request.json
+npm run engine -- run tests/fixtures/valid-low-cost-request.json --json
 ```
 
-### JSON output
+### 사용 가능한 모든 명령어
 
-```bash
-npm run run -- run tests/fixtures/valid-low-cost-request.json --json
+| 명령어 | 설명 |
+|--------|------|
+| `engine run <파일>` | 전체 파이프라인 실행 및 결과 출력 |
+| `engine create <프로파일>` | 요청 파일 템플릿 자동 생성 |
+| `engine render <파일>` | 렌더 계획 생성 |
+| `engine prompt <파일>` | AI 생성 도구용 프롬프트 생성 |
+| `engine publish <파일>` | 플랫폼 업로드 계획 생성 |
+| `engine analyze <파일>` | 요청 분석 리포트 생성 |
+| `engine config --json` | 사용 가능한 프로파일 목록 확인 |
+| `engine doctor` | 시스템 상태 진단 |
+
+---
+
+## 나만의 요청 파일 만들기
+
+`tests/fixtures/valid-low-cost-request.json` 을 복사해서 원하는 내용으로 수정하세요.
+
+```json
+{
+  "version": "0.1",
+  "intent": {
+    "topic": "만들고 싶은 영상 주제",
+    "subject": "등장 인물 또는 사물",
+    "goal": "영상의 목적",
+    "emotion": "전달하고 싶은 감정",
+    "platform": "youtube_shorts",
+    "theme": "explainer",
+    "duration_sec": 30
+  },
+  "constraints": {
+    "language": "ko",
+    "budget_tier": "low",
+    "quality_tier": "balanced",
+    "visual_consistency_required": true,
+    "content_policy_safe": true
+  },
+  "style": {
+    "hook_type": "curiosity",
+    "pacing_profile": "fast_cut",
+    "caption_style": "tiktok_viral",
+    "camera_language": "simple_push_in"
+  },
+  "backend": {
+    "preferred_engine": "local",
+    "allow_fallback": true
+  },
+  "output": {
+    "type": "video_prompt"
+  }
+}
 ```
 
-### Prompt output
+### 주요 옵션 설명
 
-```bash
-npm run run -- prompt tests/fixtures/valid-low-cost-request.json
+**platform** (플랫폼)
+- `youtube_shorts` — 유튜브 쇼츠 (15~60초)
+- `tiktok` — 틱톡 (10~45초)
+- `instagram_reels` — 인스타그램 릴스 (10~45초)
+
+**budget_tier** (예산 등급)
+- `low` — 저비용 로컬 처리
+- `balanced` — 균형 잡힌 처리
+- `high` — 고품질 처리 허용
+
+**quality_tier** (품질 등급)
+- `low` — 빠른 초안
+- `balanced` — 일반 품질
+- `premium` — 최고 품질
+
+**preferred_engine** (선호 엔진)
+- `local` — 로컬 처리 (비용 없음)
+- `gpu` — GPU 가속
+- `sora` / `premium` — 프리미엄 AI 엔진
+
+---
+
+## 출력 결과 이해하기
+
+`--json` 플래그를 사용하면 아래와 같은 구조의 JSON이 출력됩니다.
+
+```json
+{
+  "schema_version": "0.1",
+  "request_id": "...",
+  "validation": { "valid": true, "errors": [] },
+  "normalized_request": { "base": {}, "derived": {} },
+  "platform_output_spec": {
+    "platform": "youtube_shorts",
+    "effective_duration_sec": 30,
+    "warnings": []
+  },
+  "motion_plan": { "segments": [...] },
+  "broll_plan": { "segments": [...] },
+  "learning_state": { "phase": "bootstrapped", "weights": {} },
+  "scoring": { "candidate_score": 0.72 },
+  "routing": {
+    "selected_backend": "local",
+    "reason_codes": ["local_backend_available"]
+  },
+  "execution_plan": { "nodes": [...], "edges": [...] },
+  "recovery_simulation": { "normal_path": [...], "recovery_paths": [...] }
+}
 ```
 
-### Prompt JSON output
+| 필드 | 설명 |
+|------|------|
+| `validation` | 요청 파일이 올바른지 여부 |
+| `platform_output_spec` | 플랫폼별 영상 규격 및 자동 보정 결과 |
+| `motion_plan` | 카메라 움직임 계획 |
+| `broll_plan` | 보조 영상 클립 추천 목록 |
+| `learning_state` | 현재 개인화 단계 (bootstrapped → adaptive → personalized) |
+| `routing` | 선택된 처리 방식과 이유 |
+| `execution_plan` | 처리 순서와 각 단계 비용 |
+| `recovery_simulation` | 오류 발생 시 복구 경로 |
 
-```bash
-npm run run -- prompt tests/fixtures/valid-low-cost-request.json --json
-```
+---
 
-### Config output
-
-```bash
-npm run run -- config --json
-```
-
-### Create request scaffold
-
-```bash
-npm run run -- create youtube_explainer tmp/request.json --json
-```
-
-### Doctor output
-
-```bash
-npm run run -- doctor --json
-```
-
-### Analyze output
-
-```bash
-npm run run -- analyze tests/fixtures/valid-low-cost-request.json --json
-```
-
-### Render manifest output
-
-```bash
-npm run run -- render tests/fixtures/valid-low-cost-request.json --json
-```
-
-### Publish manifest output
-
-```bash
-npm run run -- publish tests/fixtures/valid-low-cost-request.json --json
-```
-
-## How the command works
-
-`engine run <request.json>` always follows this order:
-
-1. Load the JSON file
-2. Validate the request structure
-3. Normalize the request into `base` and `derived`
-4. Resolve the novel-to-shorts plan when `novel_project` is present
-5. Resolve the platform output spec
-6. Resolve the motion plan
-7. Resolve the B-roll plan
-8. Resolve the learning state
-9. Score the request
-10. Choose a routing decision
-11. Build an execution plan with nodes and edges
-12. Simulate normal and recovery paths
-13. Render output for humans or machines
-
-`engine prompt <request.json>` reuses the same planning context through `resolve_planning_context`, then:
-
-1. Build a deterministic `PromptResult`
-2. Render a short human-readable prompt summary or JSON
-
-`engine analyze <request.json>` reuses the same planning context and emits a compact readiness and risk summary.
-
-`engine render <request.json>` reuses the same planning context plus `PromptResult`, then emits a deterministic `RenderPlan`.
-
-`engine publish <request.json>` reuses the same planning context plus `PromptResult` and `RenderPlan`, then emits a deterministic `PublishPlan`.
-
-`engine config` exposes the built-in profile catalog and supported commands.
-
-`engine create <profile> <output.json>` writes a starter request scaffold from the built-in profile catalog.
-
-`engine doctor` checks whether the local environment can run the simulate-first CLI safely.
-
-## Output fields
-
-The JSON output includes these top-level fields:
-
-- `schema_version`
-- `request_id`
-- `validation`
-- `normalized_request`
-- `platform_output_spec`
-- `novel_shorts_plan`
-- `motion_plan`
-- `broll_plan`
-- `learning_state`
-- `scoring`
-- `routing`
-- `execution_plan`
-- `recovery_simulation`
-
-The prompt JSON output includes these top-level fields:
-
-- `schema_version`
-- `engine`
-- `main_prompt`
-- `negative_prompt`
-- `style_descriptor`
-- `quality_score`
-- `warnings`
-- `params`
-
-The analyze JSON output includes these top-level fields:
-
-- `schema_version`
-- `request_id`
-- `readiness`
-- `risk_summary`
-- `warning_count`
-- `recommended_backend`
-
-The render JSON output includes these top-level fields:
-
-- `schema_version`
-- `render_id`
-- `engine`
-- `output_filename`
-- `segments`
-- `asset_manifest`
-- `qa_checklist`
-- `warnings`
-
-The publish JSON output includes these top-level fields:
-
-- `schema_version`
-- `publish_id`
-- `platform`
-- `title`
-- `description`
-- `hashtags`
-- `cta`
-- `upload_checklist`
-- `warnings`
-
-### Example result summary
-
-- `validation.valid`: whether the input matched the schema
-- `normalized_request.base`: cleaned user input
-- `normalized_request.derived`: computed fields such as aspect ratio and premium allowance
-- `platform_output_spec`: platform policy, effective duration, warnings, and adjustments
-- `novel_shorts_plan`: optional novel highlight, hook, script outline, QA flags, and intent overrides
-- `motion_plan`: segment grid, motion assignments, hook summary, and anti-repetition state
-- `broll_plan`: seed-backed semantic concepts aligned to motion segments
-- `learning_state`: cold-start phase, weights, threshold flags, confidence, and fallback priors
-- `routing.selected_backend`: the backend chosen for this request
-- `routing.reason_codes`: why the backend was chosen
-- `execution_plan.nodes`: logical engine nodes
-- `execution_plan.edges`: the order between nodes
-- `recovery_simulation.normal_path`: the happy-path flow
-- `recovery_simulation.recovery_paths`: the fallback flow if a node fails
-- `main_prompt`: the structured generation prompt derived from planning output
-- `params`: prompt execution parameters such as aspect ratio and effective duration
-- `readiness`: prompt/render/publish readiness booleans
-- `segments`: render-time segment assignments derived from motion and B-roll plans
-- `hashtags`: deterministic platform packaging tags for publish preparation
-
-## Human-readable summary
-
-The default `engine run` output stays short and includes:
-
-- platform
-- effective duration in seconds
-- warning count, including `0`
-
-Use `--json` to inspect the full planning objects such as `platform_output_spec`, `novel_shorts_plan`, `motion_plan`, `broll_plan`, and `learning_state`.
-
-The default `engine prompt` output also stays short and includes:
-
-- engine
-- quality score
-- warning count, including `0`
-- main prompt text
-
-Use `engine prompt --json` to inspect the full `PromptResult`.
-
-The default `engine analyze`, `engine render`, and `engine publish` outputs also stay short and summarize backend, readiness, filenames, hashtag counts, and warnings. Use `--json` to inspect the full structured result for each command.
-
-## Test
+## 테스트 실행
 
 ```bash
 npm test
 ```
 
-Current test coverage verifies:
+70개 테스트가 모두 통과하면 정상입니다.
 
-- schema validation
-- normalization
-- platform output spec resolution
-- novel-to-shorts planning
-- motion planning
-- semantic B-roll planning
-- learning-state resolution
-- scoring and routing
-- execution planning
-- recovery simulation
-- request scaffolding
-- environment doctor
-- analysis reports
-- render manifest generation
-- publish manifest generation
-- CLI JSON output
-- CLI exit codes
+---
 
-## Project structure
+## 프로젝트 구조
 
-```text
+```
 src/
-  analyze/
-  broll/
-  cli/
-  config/
-  create/
-  domain/
-  doctor/
-  learning/
-  motion/
-  novel/
-  platform/
-  publish/
-  prompt/
-  render/
-  simulation/
-  shared/
+  cli/          명령줄 인터페이스 (명령어 처리)
+  domain/       핵심 비즈니스 로직 (검증, 정규화, 라우팅)
+  platform/     플랫폼별 영상 규격 (유튜브, 틱톡, 릴스)
+  motion/       카메라 모션 패턴 규칙
+  broll/        B-roll 시맨틱 매핑
+  learning/     학습 상태 및 개인화
+  novel/        소설→숏폼 변환 파이프라인
+  prompt/       AI 프롬프트 생성
+  render/       렌더 계획 생성
+  publish/      퍼블리시 계획 생성
+  analyze/      분석 리포트 생성
+  simulation/   실행 계획 및 회복 시뮬레이션
+  shared/       공통 유틸리티
 tests/
-  analyze/
-  broll/
-  bootstrap/
-  cli/
-  domain/
-  fixtures/
-  helpers/
-  learning/
-  motion/
-  novel/
-  platform/
-  publish/
-  prompt/
-  render/
-  simulation/
-docs/
-  superpowers/
+  fixtures/     테스트용 요청 파일 예시들
 ```
 
-## Public GitHub safety
+---
 
-This repository is intended for future public publication. Sensitive and unnecessary files are excluded through `.gitignore`, including:
+## 비용 라우팅 규칙
 
-- dependency directories
-- build outputs
-- environment files
-- logs
-- editor cache files
-- common credential and certificate files
+이 엔진은 5가지 결정론적 규칙으로 가장 저렴한 처리 방식을 자동 선택합니다.
 
-Before publishing, review [docs/github-publication-checklist.md](C:\Users\sinmb\workspace\media\docs\github-publication-checklist.md).
+| 규칙 | 내용 |
+|------|------|
+| Rule A | 후보 점수가 0.6 미만이면 프리미엄 엔진 사용 안 함 |
+| Rule B | 캐시 히트 시 즉시 반환 (항상 최우선) |
+| Rule C | 배치 크기 5개 이상 + GPU 사용 가능 시 GPU 우선 |
+| Rule D | 프리미엄 엔진은 최종 고가치 단계에만 허용 |
+| Rule E | 재시도 비용이 예상 이득보다 크면 폴백으로 직행 |
+
+---
+
+## 플랫폼별 영상 규격
+
+| 플랫폼 | 권장 길이 | 최소 | 최대 | 특징 |
+|--------|-----------|------|------|------|
+| 유튜브 쇼츠 | 30초 | 15초 | 60초 | 검색 최적화, 훅 명확성 중시 |
+| 틱톡 | 20초 | 10초 | 45초 | 모션 에너지, 자막 즉시성 중시 |
+| 인스타그램 릴스 | 20초 | 10초 | 45초 | 시각적 일관성, 브랜드 완성도 중시 |
+
+요청 파일의 `duration_sec`이 플랫폼 범위를 벗어나면 자동으로 보정되고 `warnings`에 기록됩니다.
+
+---
+
+## 현재 구현되지 않은 기능
+
+이 프로젝트는 **기획·계획 단계**만 시뮬레이션합니다. 아래 기능은 추후 추가 예정입니다.
+
+- 실제 영상 생성 (Sora, Runway, Kling 등 AI 영상 API 연동)
+- 실제 TTS (음성 합성) 생성
+- 실제 플랫폼 업로드 자동화
+- 대화형 설정 마법사 (CLI 인터랙티브 모드)
+
+---
+
+## 기여 방법
+
+1. 이 저장소를 Fork합니다.
+2. 새 브랜치를 만듭니다: `git checkout -b feature/내기능`
+3. 변경 후 테스트를 실행합니다: `npm test`
+4. Pull Request를 보냅니다.
+
+---
+
+## 라이선스
+
+MIT License — 자유롭게 사용, 수정, 배포하실 수 있습니다.
+
+---
+
+## 문의 및 이슈
+
+버그 신고나 기능 제안은 [GitHub Issues](https://github.com/sinmb79/Shorts-engine/issues)에 남겨주세요.

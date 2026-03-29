@@ -24,12 +24,12 @@ test("clamps TikTok duration to the platform maximum and records a warning", asy
   const spec = resolvePlatformOutputSpec(normalized);
 
   assert.equal(spec.platform, "tiktok");
-  assert.equal(spec.max_duration_sec, 25);
-  assert.equal(spec.effective_duration_sec, 25);
+  assert.equal(spec.max_duration_sec, 45);
+  assert.equal(spec.effective_duration_sec, 45);
   assert.match(spec.warnings.join(","), /duration_clamped_to_platform_max/);
   assert.equal(spec.adjustments[0]?.field, "duration_sec");
-  assert.equal(spec.adjustments[0]?.from, 40);
-  assert.equal(spec.adjustments[0]?.to, 25);
+  assert.equal(spec.adjustments[0]?.from, 50);
+  assert.equal(spec.adjustments[0]?.to, 45);
 });
 
 test("raises Instagram Reels duration to the platform minimum and records an adjustment", async () => {
