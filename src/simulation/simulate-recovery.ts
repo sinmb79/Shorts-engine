@@ -13,7 +13,7 @@ export function simulateRecovery(plan: ExecutionPlan): RecoverySimulation {
       trigger_node: node.node_id,
       failure_code: inferFailureCode(node.node_id),
       attempts: [
-        `retry:${node.node_id}:x${node.retry_count}`,
+        ...(node.retry_count > 0 ? [`retry:${node.node_id}:x${node.retry_count}`] : []),
         `fallback:${node.fallback_node}`,
       ],
       final_status: node.skip_allowed ? "partial_success" : "success_with_fallback",

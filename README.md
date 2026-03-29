@@ -152,16 +152,3 @@ This repository is intended for future public publication. Sensitive and unneces
 - common credential and certificate files
 
 Before publishing, review [docs/github-publication-checklist.md](C:\Users\sinmb\workspace\media\docs\github-publication-checklist.md).
-
-## Safety for Public GitHub Publishing
-
-This repository is intended for future public publication. Sensitive and unnecessary files are excluded through `.gitignore`, including:
-
-- dependency directories
-- build outputs
-- environment files
-- logs
-- editor cache files
-- common credential and certificate files
-
-Do not store secrets in this workspace. Keep them outside the repository and load them only when needed.

@@ -9,7 +9,7 @@ const PLATFORM_DEFAULT_DURATIONS = {
 export function normalizeRequest(request: EngineRequest): NormalizedRequest {
   const resolvedDuration = Math.max(
     1,
-    request.intent.duration_sec ||
+    request.intent.duration_sec ??
       PLATFORM_DEFAULT_DURATIONS[request.intent.platform],
   );
 

@@ -15,6 +15,10 @@ import {
 } from "./exit-codes.js";
 import { renderOutput } from "./render-output.js";
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 export async function runEngineCommand(
   requestPath: string,
   options: { json: boolean; simulate: boolean },
@@ -32,7 +36,13 @@ export async function runEngineCommand(
       return {
         exitCode: EXIT_CODE_VALIDATION_FAILURE,
         output: renderOutput(
-          createRunResult(requestId, "0.1", validation, null, null, null, null, null),
+          createRunResult(
+            requestId,
+            isRecord(rawRequest) && typeof rawRequest['version'] === 'string'
+              ? rawRequest['version']
+              : '0.1',
+            validation, null, null, null, null, null
+          ),
           options.json,
         ),
       };

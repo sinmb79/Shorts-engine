@@ -105,6 +105,8 @@ function buildFallbackNodes(
   videoFallbackNode: string | null,
   fallbackBackend: RoutingDecision["fallback_backend"],
 ): ExecutionPlanNode[] {
+  if (fallbackBackend === null) return [];
+
   const nodes = new Map<string, ExecutionPlanNode>();
 
   nodes.set(
@@ -137,7 +139,7 @@ function buildFallbackNodes(
     );
   }
 
-  return fallbackBackend === null ? [] : [...nodes.values()];
+  return [...nodes.values()];
 }
 
 function createNode(
