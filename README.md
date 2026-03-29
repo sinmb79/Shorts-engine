@@ -111,6 +111,7 @@ npm run engine -- run my-request.json
 | 명령어 | 설명 |
 |--------|------|
 | `engine wizard [파일]` | **대화형 마법사** — 질문에 답하며 요청 파일 생성 |
+| `engine execute <파일> [--dry-run]` | 실제 영상 생성 어댑터 호출 (API 키 필요) |
 | `engine run <파일>` | 전체 파이프라인 실행 및 결과 출력 |
 | `engine create <프로파일>` | 요청 파일 템플릿 자동 생성 |
 | `engine render <파일>` | 렌더 계획 생성 |
@@ -285,11 +286,31 @@ tests/
 
 ---
 
+## 영상 생성 API 연동 방법
+
+`.env.example`을 복사하여 `.env` 파일을 만들고 API 키를 입력하세요:
+
+```bash
+cp .env.example .env
+# .env 파일을 열어 API 키 입력
+```
+
+그 다음 아래 명령어로 실행합니다:
+
+```bash
+npm run engine -- execute my-request.json           # 실제 API 호출
+npm run engine -- execute my-request.json --dry-run # 테스트 (API 호출 없음)
+```
+
+API 키가 없으면 자동으로 `local` 어댑터(dry_run)로 동작합니다.
+
+---
+
 ## 현재 구현되지 않은 기능
 
 이 프로젝트는 **기획·계획 단계**만 시뮬레이션합니다. 아래 기능은 추후 추가 예정입니다.
 
-- 실제 영상 생성 (Sora, Runway, Kling 등 AI 영상 API 연동)
+- 실제 영상 생성 — 어댑터 프레임워크 구현 완료. Sora/Runway/Kling API 키를 `.env`에 추가하면 실제 생성 가능 (각 서비스의 공개 API 상태에 따라 다름)
 - 실제 TTS (음성 합성) 생성
 - 실제 플랫폼 업로드 자동화
 
