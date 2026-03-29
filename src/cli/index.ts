@@ -11,6 +11,7 @@ import { promptEngineCommand } from "./prompt-engine-command.js";
 import { publishEngineCommand } from "./publish-engine-command.js";
 import { renderEngineCommand } from "./render-engine-command.js";
 import { runEngineCommand } from "./run-engine-command.js";
+import { wizardEngineCommand } from "./wizard-engine-command.js";
 
 const args = process.argv.slice(2);
 const [command, ...rest] = args;
@@ -21,7 +22,7 @@ const simulate = flags.includes("--simulate");
 
 if (!command) {
   process.stderr.write(
-    "Usage: engine <run|prompt|create|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+    "Usage: engine <run|prompt|create|wizard|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
   );
   process.exit(EXIT_CODE_INTERNAL_ERROR);
 }
@@ -41,6 +42,12 @@ async function executeCommand(
 
   if (commandName === "doctor") {
     return doctorEngineCommand({ json: options.json });
+  }
+
+  if (commandName === "wizard") {
+    const [outputPath] = positionals;
+    const resolvedPath = outputPath ?? "my-request.json";
+    return wizardEngineCommand(resolvedPath);
   }
 
   if (commandName === "create") {
@@ -68,7 +75,7 @@ async function executeCommand(
   ) {
     return {
       exitCode: EXIT_CODE_INTERNAL_ERROR,
-      output: "Usage: engine <run|prompt|create|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+      output: "Usage: engine <run|prompt|create|wizard|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
     };
   }
 

@@ -139,6 +139,7 @@ export const SUPPORTED_COMMANDS = [
   "run",
   "prompt",
   "create",
+  "wizard",
   "config",
   "doctor",
   "analyze",
