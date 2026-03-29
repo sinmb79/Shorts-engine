@@ -142,6 +142,7 @@ export const SUPPORTED_COMMANDS = [
   "wizard",
   "execute",
   "tts",
+  "upload",
   "config",
   "doctor",
   "analyze",
