@@ -7,12 +7,13 @@ import { routeRequest } from "../../src/domain/route-request.js";
 import { scoreRequest } from "../../src/domain/score-request.js";
 import { buildExecutionPlan } from "../../src/simulation/build-execution-plan.js";
 import { loadFixture } from "../helpers/load-fixture.js";
+import { createResolvedConfig } from "../helpers/resolved-config.js";
 
 test("builds a node and edge execution plan", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
   const plan = buildExecutionPlan(normalized, routing);
 
   assert.ok(plan.nodes.length > 0);
@@ -25,7 +26,7 @@ test("only references fallback nodes that exist in the plan", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
   const plan = buildExecutionPlan(normalized, routing);
   const nodeIds = new Set(plan.nodes.map((node) => node.node_id));
 
@@ -47,7 +48,11 @@ test("Rule D: tts_candidate and video_candidate use premium backend when premium
   };
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(
+    normalized,
+    scoring,
+    createResolvedConfig({ video_engine: "veo3", prefer_free_first: true }),
+  );
 
   assert.equal(routing.selected_backend, "premium", "test requires premium backend");
   assert.ok(routing.premium_allowed_steps.includes("premium_tts"));
@@ -68,7 +73,7 @@ test("Rule D: tts_candidate and video_candidate do not use premium backend when 
   const request = await loadFixture<EngineRequest>("premium-blocked-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(routing.premium_allowed_steps.length, 0);
 

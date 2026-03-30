@@ -8,6 +8,7 @@ export function renderRenderPlanOutput(result: RenderPlan, json: boolean): strin
   const lines = [
     `Render engine: ${result.engine}`,
     `Output file: ${result.output_filename}`,
+    `Caption template: ${result.caption_template.id}`,
     `Segments: ${result.segments.length}`,
     `Warnings: ${result.warnings.length}`,
   ];

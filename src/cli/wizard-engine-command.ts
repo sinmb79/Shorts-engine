@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 import { createInterface } from "node:readline";
 
+import { writeDefaultConfigSet } from "../config/write-default-config-set.js";
 import { buildRequestFromAnswers, runWizard } from "../wizard/run-wizard.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
@@ -21,6 +22,7 @@ export async function wizardEngineCommand(
     rl.close();
 
     const request = buildRequestFromAnswers(answers);
+    await writeDefaultConfigSet(process.cwd());
 
     await mkdir(path.dirname(outputPath), { recursive: true });
     await writeFile(outputPath, `${JSON.stringify(request, null, 2)}\n`, "utf8");

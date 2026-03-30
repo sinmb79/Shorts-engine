@@ -9,6 +9,7 @@ test("prints render manifest in JSON", () => {
     schema_version?: string;
     engine?: string;
     output_filename?: string;
+    caption_template?: { id?: string };
     segments?: Array<{ segment_id?: string }>;
   };
 
@@ -16,6 +17,7 @@ test("prints render manifest in JSON", () => {
   assert.equal(parsed.schema_version, "0.1");
   assert.equal(parsed.engine, "local");
   assert.match(parsed.output_filename ?? "", /\.mp4$/);
+  assert.equal(parsed.caption_template?.id, "tiktok_viral");
   assert.equal(parsed.segments?.[0]?.segment_id, "hook");
 });
 

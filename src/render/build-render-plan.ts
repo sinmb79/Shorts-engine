@@ -8,6 +8,7 @@ import type {
   RoutingDecision,
 } from "../domain/contracts.js";
 import { createRequestId } from "../shared/request-id.js";
+import { selectCaptionTemplate } from "./caption-templates.js";
 
 export function buildRenderPlan(input: {
   requestId: string;
@@ -27,6 +28,10 @@ export function buildRenderPlan(input: {
     routing,
     platformOutputSpec,
   } = input;
+  const captionTemplate = selectCaptionTemplate(
+    effectiveRequest.base.intent.theme,
+    effectiveRequest.base.style.caption_style,
+  );
 
   return {
     schema_version: "0.1",
@@ -39,9 +44,10 @@ export function buildRenderPlan(input: {
       motion: segment.motion,
       broll_concept: brollPlan.segments[index]?.concept ?? "generic_visual",
     })),
+    caption_template: captionTemplate,
     asset_manifest: {
       prompt_engine: routing.selected_backend,
-      caption_style: effectiveRequest.base.style.caption_style,
+      caption_style: captionTemplate.id,
       camera_language: effectiveRequest.base.style.camera_language,
       placeholder_assets: [
         "primary_scene_prompt",

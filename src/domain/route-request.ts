@@ -5,10 +5,16 @@ import type {
   RoutingDecision,
   ScoringResult,
 } from "./contracts.js";
+import type { ResolvedConfig } from "../config/config-resolver.js";
+import {
+  SmartVideoRouter,
+  type VideoRouterEngine,
+} from "../routing/smart-video-router.js";
 
 export function routeRequest(
   request: NormalizedRequest,
   scoring: ScoringResult,
+  resolvedConfig: ResolvedConfig,
 ): RoutingDecision {
   const reasonCodes: string[] = [];
   const allowFallback = request.base.backend.allow_fallback;
@@ -38,18 +44,37 @@ export function routeRequest(
     batch_size >= 5 &&
     gpu_available === true;
 
-  let selectedBackend = chooseBackend(
-    request.base.backend.preferred_engine,
-    premiumAllowed,
-  );
+  let selectedBackend: RoutingDecision["selected_backend"];
 
   if (ruleCTriggered) {
     selectedBackend = "gpu";
     reasonCodes.push("batch_gpu_preferred");
-  } else if (selectedBackend === "local") {
+  } else if (
+    !premiumAllowed &&
+    (request.base.backend.preferred_engine === "sora" ||
+      request.base.backend.preferred_engine === "premium")
+  ) {
+    selectedBackend = "local";
     reasonCodes.push("local_backend_available");
-  } else if (selectedBackend === "premium") {
-    reasonCodes.push("premium_allowed_for_final_value_steps");
+  } else {
+    const router = new SmartVideoRouter();
+    const selectedEngine = router.selectEngine(
+      request.base,
+      resolvedConfig,
+      0,
+    );
+
+    selectedBackend = mapSelectedEngineToBackend(
+      selectedEngine,
+      request.base.backend.preferred_engine,
+    );
+    reasonCodes.push(`video_engine_selected:${selectedEngine}`);
+
+    if (selectedBackend === "local") {
+      reasonCodes.push("local_backend_available");
+    } else if (selectedBackend === "premium") {
+      reasonCodes.push("premium_allowed_for_final_value_steps");
+    }
   }
 
   const premiumAllowedSteps: PremiumAllowedStep[] = premiumAllowed
@@ -65,11 +90,15 @@ export function routeRequest(
   };
 }
 
-function chooseBackend(
+function mapSelectedEngineToBackend(
+  selectedEngine: VideoRouterEngine,
   preferredEngine: PreferredEngine,
-  premiumAllowed: boolean,
 ): RoutingDecision["selected_backend"] {
-  if (preferredEngine === "local") {
+  if (selectedEngine === "cache") {
+    return "cache";
+  }
+
+  if (selectedEngine === "local" || selectedEngine === "ffmpeg_slides") {
     return "local";
   }
 
@@ -77,11 +106,7 @@ function chooseBackend(
     return "gpu";
   }
 
-  if (preferredEngine === "sora" || preferredEngine === "premium") {
-    return premiumAllowed ? "premium" : "local";
-  }
-
-  return "local";
+  return "premium";
 }
 
 function chooseFallbackBackend(

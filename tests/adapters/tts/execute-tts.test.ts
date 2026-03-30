@@ -7,6 +7,7 @@ import {
   buildTtsRequestFromContext,
 } from "../../../src/execute/execute-tts.js";
 import { loadFixture } from "../../helpers/load-fixture.js";
+import { createResolvedConfig } from "../../helpers/resolved-config.js";
 import type { EngineRequest } from "../../../src/domain/contracts.js";
 import { resolvePlanningContext } from "../../../src/cli/resolve-planning-context.js";
 
@@ -22,7 +23,7 @@ function makeMockTtsAdapter(name: string): TtsAdapter {
 
 test("executeTts returns result for all nodes", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
   const mockAdapter = makeMockTtsAdapter("mock");
 
   const result = await executeTts(context, {
@@ -38,7 +39,7 @@ test("executeTts returns result for all nodes", async () => {
 
 test("executeTts summary counts dry_run correctly", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
   const mockAdapter = makeMockTtsAdapter("mock");
 
   const result = await executeTts(context, {
@@ -52,7 +53,7 @@ test("executeTts summary counts dry_run correctly", async () => {
 
 test("buildTtsRequestFromContext returns valid TtsRequest", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
 
   const ttsRequest = buildTtsRequestFromContext(context);
 

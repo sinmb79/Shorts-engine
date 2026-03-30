@@ -1,0 +1,113 @@
+{
+  "_comment": "Shorts-engine runtime configuration foundation for MediaForge integration",
+  "_updated": "2026-03-30",
+  "defaults": {
+    "language": "ko",
+    "platform": "youtube_shorts",
+    "caption_template": "tiktok_viral",
+    "video_engine": "local",
+    "gpu_engine": "runway",
+    "premium_engine": "veo3"
+  },
+  "tts": {
+    "provider": "openai",
+    "options": {
+      "openai": {
+        "api_key_env": "OPENAI_API_KEY",
+        "model": "tts-1-hd",
+        "voice": "alloy",
+        "speed": 1
+      },
+      "elevenlabs": {
+        "api_key_env": "ELEVENLABS_API_KEY",
+        "model": "eleven_multilingual_v2",
+        "voice_id": "pNInz6obpgDQGcFmaJgB",
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "google_cloud": {
+        "api_key_env": "GOOGLE_TTS_API_KEY",
+        "voice": "ko-KR-Wavenet-A",
+        "speaking_rate": 1.05,
+        "pitch": 0
+      },
+      "edge": {
+        "voice": "ko-KR-SunHiNeural",
+        "rate": "+10%"
+      },
+      "gtts": {
+        "lang": "ko",
+        "slow": false
+      }
+    }
+  },
+  "video_generation": {
+    "provider": "smart_router",
+    "defaults": {
+      "language": "ko",
+      "platform": "youtube_shorts",
+      "caption_template": "tiktok_viral",
+      "video_engine": "local",
+      "gpu_engine": "runway",
+      "premium_engine": "veo3"
+    },
+    "options": {
+      "smart_router": {
+        "priority": ["kling_free", "veo3", "seedance2", "runway", "ffmpeg_slides"],
+        "daily_cost_limit_usd": 0.5,
+        "prefer_free_first": true,
+        "fallback": "ffmpeg_slides"
+      },
+      "kling_free": {
+        "api_url": "https://api.klingai.com/v1",
+        "api_key_env": "KLING_API_KEY",
+        "free_daily_credits": 66,
+        "resolution": "720p",
+        "aspect_ratio": "9:16",
+        "audio": true,
+        "cost_per_sec": 0
+      },
+      "veo3": {
+        "api_key_env": "GEMINI_API_KEY",
+        "model": "veo-3.1",
+        "resolution": "720p",
+        "aspect_ratio": "9:16",
+        "audio": true,
+        "cost_per_sec": 0.03
+      },
+      "seedance2": {
+        "provider": "fal.ai",
+        "api_key_env": "FAL_API_KEY",
+        "model": "seedance-2.0",
+        "resolution": "720p",
+        "audio": true,
+        "cost_per_sec": 0.022
+      },
+      "runway": {
+        "api_key_env": "RUNWAY_API_KEY",
+        "model": "gen3a_turbo",
+        "duration": 10,
+        "ratio": "768:1344",
+        "fallback": "ffmpeg_slides"
+      },
+      "ffmpeg_slides": {
+        "resolution": "1080x1920",
+        "fps": 30,
+        "transition": "fade",
+        "transition_duration": 0.5,
+        "bgm_volume": 0.08,
+        "zoom_speed": 0.0003,
+        "zoom_max": 1.05,
+        "burn_subtitles": true
+      }
+    }
+  },
+  "optional_keys": {
+    "KLING_API_KEY": "Kling video generation",
+    "FAL_API_KEY": "Seedance video generation via fal.ai",
+    "GEMINI_API_KEY": "Gemini and Veo access",
+    "RUNWAY_API_KEY": "Runway video generation",
+    "OPENAI_API_KEY": "OpenAI TTS access",
+    "ELEVENLABS_API_KEY": "ElevenLabs TTS access"
+  }
+}

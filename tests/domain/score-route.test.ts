@@ -5,13 +5,14 @@ import type { EngineRequest } from "../../src/domain/contracts.js";
 import { normalizeRequest } from "../../src/domain/normalize-request.js";
 import { routeRequest } from "../../src/domain/route-request.js";
 import { scoreRequest } from "../../src/domain/score-request.js";
+import { createResolvedConfig } from "../helpers/resolved-config.js";
 import { loadFixture } from "../helpers/load-fixture.js";
 
 test("blocks premium routing when candidate score is below threshold", async () => {
   const request = await loadFixture<EngineRequest>("premium-blocked-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(routing.premium_allowed, false);
   assert.equal(routing.selected_backend, "local");
@@ -26,18 +27,39 @@ test("keeps low-cost requests on the local backend", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(scoring.candidate_score >= 0, true);
   assert.equal(routing.selected_backend, "local");
   assert.match(routing.reason_codes.join(","), /local_backend_available/);
 });
 
+test("uses smart router engine selection for premium-eligible requests", async () => {
+  const request: EngineRequest = {
+    version: "0.1",
+    intent: { topic: "t", subject: "s", goal: "g", emotion: "e", platform: "youtube_shorts", theme: "th", duration_sec: 30 },
+    constraints: { language: "en", budget_tier: "high", quality_tier: "premium", visual_consistency_required: true, content_policy_safe: true },
+    style: { hook_type: "curiosity", pacing_profile: "fast_cut", caption_style: "tiktok_viral", camera_language: "simple_push_in" },
+    backend: { preferred_engine: "premium", allow_fallback: true },
+    output: { type: "video_prompt" },
+  };
+  const normalized = normalizeRequest(request);
+  const scoring = scoreRequest(normalized);
+  const routing = routeRequest(
+    normalized,
+    scoring,
+    createResolvedConfig({ video_engine: "veo3", prefer_free_first: true }),
+  );
+
+  assert.equal(routing.selected_backend, "premium");
+  assert.match(routing.reason_codes.join(","), /video_engine_selected:kling_free/);
+});
+
 test("disables fallback backend when the request forbids fallback", async () => {
   const request = await loadFixture<EngineRequest>("no-fallback-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(routing.selected_backend, "local");
   assert.equal(routing.fallback_backend, null);
@@ -47,7 +69,7 @@ test("routes to gpu when batch_size >= 5 and gpu_available is true", async () =>
   const request = await loadFixture<EngineRequest>("batch-gpu-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(routing.selected_backend, "gpu");
   assert.match(routing.reason_codes.join(","), /batch_gpu_preferred/);
@@ -61,7 +83,7 @@ test("Rule C triggers at exact boundary batch_size === 5", async () => {
   };
   const normalized = normalizeRequest(atBoundary);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(routing.selected_backend, "gpu");
   assert.match(routing.reason_codes.join(","), /batch_gpu_preferred/);
@@ -75,7 +97,7 @@ test("Rule C does not trigger when batch_size is below threshold", async () => {
   };
   const normalized = normalizeRequest(belowThreshold);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.notEqual(routing.selected_backend, "gpu");
   assert.doesNotMatch(routing.reason_codes.join(","), /batch_gpu_preferred/);
@@ -92,7 +114,11 @@ test("premium_allowed_steps is populated when premium is allowed", async () => {
   };
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(
+    normalized,
+    scoring,
+    createResolvedConfig({ video_engine: "veo3", prefer_free_first: true }),
+  );
 
   assert.equal(routing.premium_allowed, true);
   assert.equal(routing.premium_allowed_steps.length, 4);
@@ -106,7 +132,7 @@ test("premium_allowed_steps is empty when premium is blocked", async () => {
   const request = await loadFixture<EngineRequest>("premium-blocked-request.json");
   const normalized = normalizeRequest(request);
   const scoring = scoreRequest(normalized);
-  const routing = routeRequest(normalized, scoring);
+  const routing = routeRequest(normalized, scoring, createResolvedConfig());
 
   assert.equal(routing.premium_allowed, false);
   assert.equal(routing.premium_allowed_steps.length, 0);

@@ -7,10 +7,11 @@ import { buildRenderPlan } from "../../src/render/build-render-plan.js";
 import type { EngineRequest } from "../../src/domain/contracts.js";
 import { createRequestId } from "../../src/shared/request-id.js";
 import { loadFixture } from "../helpers/load-fixture.js";
+import { createResolvedConfig } from "../helpers/resolved-config.js";
 
 test("builds a render manifest aligned to motion and b-roll segments", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const planningContext = resolvePlanningContext(request);
+  const planningContext = resolvePlanningContext(request, createResolvedConfig());
   const promptResult = buildPromptResult({
     brollPlan: planningContext.broll_plan,
     effectiveRequest: planningContext.effective_request,
@@ -18,6 +19,7 @@ test("builds a render manifest aligned to motion and b-roll segments", async () 
     motionPlan: planningContext.motion_plan,
     novelShortsPlan: planningContext.novel_shorts_plan,
     platformOutputSpec: planningContext.platform_output_spec,
+    resolvedConfig: planningContext.resolved_config,
     routing: planningContext.routing,
     scoring: planningContext.scoring,
   });
@@ -38,4 +40,5 @@ test("builds a render manifest aligned to motion and b-roll segments", async () 
   assert.equal(renderPlan.segments[0]?.segment_id, "hook");
   assert.equal(renderPlan.segments[0]?.motion, "zoom_in");
   assert.equal(renderPlan.segments[0]?.broll_concept, "ai");
+  assert.equal(renderPlan.caption_template.id, "tiktok_viral");
 });

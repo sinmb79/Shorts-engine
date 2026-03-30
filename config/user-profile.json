@@ -1,0 +1,12 @@
+{
+  "_comment": "Local user profile defaults for Shorts-engine runtime resolution",
+  "budget": {
+    "daily_cost_limit_usd": 0.5,
+    "prefer_free_first": true
+  },
+  "defaults": {
+    "language": "ko",
+    "platform": "youtube_shorts"
+  },
+  "created_at": null
+}

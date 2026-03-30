@@ -5,7 +5,9 @@ import {
   executeVideoGeneration,
   buildPromptFromPlanningContext,
 } from "../../../src/execute/execute-video-generation.js";
+import type { PromptTrackerLike } from "../../../src/tracking/prompt-tracker.js";
 import { loadFixture } from "../../helpers/load-fixture.js";
+import { createResolvedConfig } from "../../helpers/resolved-config.js";
 import type { EngineRequest } from "../../../src/domain/contracts.js";
 import { resolvePlanningContext } from "../../../src/cli/resolve-planning-context.js";
 
@@ -19,9 +21,27 @@ function makeMockAdapter(name: string): VideoGenerationAdapter {
   };
 }
 
+function createTrackerSpy() {
+  const records: Array<Record<string, unknown>> = [];
+  const tracker: PromptTrackerLike = {
+    record(entry) {
+      records.push(entry);
+    },
+    getHistory() {
+      return [];
+    },
+    getStats() {
+      return { total: 0, by_engine: {}, avg_cost: 0 };
+    },
+    close() {},
+  };
+
+  return { tracker, records };
+}
+
 test("executeVideoGeneration returns result for all nodes", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
   const mockAdapter = makeMockAdapter("mock");
 
   const result = await executeVideoGeneration(context, {
@@ -37,7 +57,7 @@ test("executeVideoGeneration returns result for all nodes", async () => {
 
 test("executeVideoGeneration summary counts dry_run correctly", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
   const mockAdapter = makeMockAdapter("mock");
 
   const result = await executeVideoGeneration(context, {
@@ -49,9 +69,26 @@ test("executeVideoGeneration summary counts dry_run correctly", async () => {
   assert.equal(result.summary.success, 0);
 });
 
+test("executeVideoGeneration records prompt tracker entries after generation attempts", async () => {
+  const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
+  const context = resolvePlanningContext(request, createResolvedConfig());
+  const mockAdapter = makeMockAdapter("mock");
+  const { tracker, records } = createTrackerSpy();
+
+  await executeVideoGeneration(context, {
+    dry_run: true,
+    resolveAdapter: async () => mockAdapter,
+    promptTracker: tracker,
+  });
+
+  assert.ok(records.length > 0);
+  assert.equal(records[0]?.["engine"], "mock");
+  assert.equal(records[0]?.["platform"], "youtube_shorts");
+});
+
 test("buildPromptFromPlanningContext returns valid prompt", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
 
   const prompt = buildPromptFromPlanningContext(context);
 

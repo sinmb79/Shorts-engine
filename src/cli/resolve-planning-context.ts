@@ -11,6 +11,7 @@ import type {
   RoutingDecision,
   ScoringResult,
 } from "../domain/contracts.js";
+import type { ResolvedConfig } from "../config/config-resolver.js";
 import { normalizeRequest } from "../domain/normalize-request.js";
 import { routeRequest } from "../domain/route-request.js";
 import { scoreRequest } from "../domain/score-request.js";
@@ -26,6 +27,7 @@ import { simulateRecovery } from "../simulation/simulate-recovery.js";
 import { resolveBrollPlan } from "../broll/resolve-broll-plan.js";
 
 export interface PlanningContext {
+  resolved_config: ResolvedConfig;
   normalized_request: NormalizedRequest;
   effective_request: NormalizedRequest;
   novel_shorts_plan: NovelShortsPlan | null;
@@ -39,7 +41,10 @@ export interface PlanningContext {
   recovery_simulation: RecoverySimulation;
 }
 
-export function resolvePlanningContext(request: EngineRequest): PlanningContext {
+export function resolvePlanningContext(
+  request: EngineRequest,
+  resolvedConfig: ResolvedConfig,
+): PlanningContext {
   const normalizedRequest = normalizeRequest(request);
   const novelShortsPlan = resolveNovelShortsPlan(normalizedRequest);
   const effectiveRequest = applyNovelIntentOverrides(normalizedRequest, novelShortsPlan);
@@ -53,11 +58,12 @@ export function resolvePlanningContext(request: EngineRequest): PlanningContext 
     brollPlan,
   );
   const scoring = scoreRequest(effectiveRequest);
-  const routing = routeRequest(effectiveRequest, scoring);
+  const routing = routeRequest(effectiveRequest, scoring, resolvedConfig);
   const executionPlan = buildExecutionPlan(effectiveRequest, routing);
   const recoverySimulation = simulateRecovery(executionPlan);
 
   return {
+    resolved_config: resolvedConfig,
     normalized_request: normalizedRequest,
     effective_request: effectiveRequest,
     novel_shorts_plan: novelShortsPlan,

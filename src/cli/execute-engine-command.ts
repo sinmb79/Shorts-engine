@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { resolveAdapter } from "../adapters/video/adapter-registry.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
 import { loadEngineRequest } from "./load-engine-request.js";
+import { loadRuntimeConfig } from "./load-runtime-config.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
   EXIT_CODE_SUCCESS,
@@ -12,6 +13,7 @@ import {
   executeVideoGeneration,
   type ExecuteVideoResult,
 } from "../execute/execute-video-generation.js";
+import { PromptTracker } from "../tracking/prompt-tracker.js";
 
 function renderExecuteOutput(result: ExecuteVideoResult, json: boolean): string {
   if (json) return `${JSON.stringify(result, null, 2)}\n`;
@@ -45,11 +47,16 @@ export async function executeEngineCommand(
       };
     }
 
-    const context = resolvePlanningContext(loaded.request);
+    const runtimeConfig = await loadRuntimeConfig(requestPath, loaded.request);
+    const context = resolvePlanningContext(loaded.request, runtimeConfig.resolved_config);
+    const promptTracker = new PromptTracker();
     const result = await executeVideoGeneration(context, {
       dry_run: options.dry_run,
+      requestId: loaded.request_id,
+      promptTracker,
       resolveAdapter,
     });
+    promptTracker.close();
 
     const outputPath = requestPath.replace(/\.json$/, ".execute-result.json");
     try {

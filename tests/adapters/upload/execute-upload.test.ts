@@ -7,6 +7,7 @@ import {
   buildUploadRequest,
 } from "../../../src/execute/execute-upload.js";
 import { loadFixture } from "../../helpers/load-fixture.js";
+import { createResolvedConfig } from "../../helpers/resolved-config.js";
 import type { EngineRequest } from "../../../src/domain/contracts.js";
 import { resolvePlanningContext } from "../../../src/cli/resolve-planning-context.js";
 
@@ -23,7 +24,7 @@ function makeMockUploadAdapter(name: string): UploadAdapter {
 
 test("executeUpload returns dry_run result", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
   const mockAdapter = makeMockUploadAdapter("mock");
 
   const result = await executeUpload(context, "test.mp4", {
@@ -38,7 +39,7 @@ test("executeUpload returns dry_run result", async () => {
 
 test("executeUpload sets platform from context", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
   const mockAdapter = makeMockUploadAdapter("mock");
 
   const result = await executeUpload(context, "test.mp4", {
@@ -55,7 +56,7 @@ test("executeUpload sets platform from context", async () => {
 
 test("buildUploadRequest returns valid UploadRequest", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = resolvePlanningContext(request, createResolvedConfig());
 
   const uploadRequest = buildUploadRequest(context, "/tmp/test.mp4");
 

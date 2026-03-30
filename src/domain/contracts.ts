@@ -309,11 +309,29 @@ export interface AnalyzeRiskSummary {
   learning_confidence: LearningConfidence;
 }
 
+export interface MicroSignals {
+  hook_strength: number;
+  pacing_consistency: number;
+  motion_variation: number;
+  caption_readability: number;
+  audio_text_sync: number;
+  platform_fit: number;
+}
+
+export interface HookAnalysis {
+  type: "curiosity" | "shock" | "question" | "stat" | "visual" | "statement";
+  score: number;
+  suggestions: string[];
+  optimal_duration_sec: number;
+}
+
 export interface AnalyzeResult {
   schema_version: string;
   request_id: string;
   readiness: AnalyzeReadiness;
   risk_summary: AnalyzeRiskSummary;
+  micro_signals: MicroSignals;
+  hook_analysis: HookAnalysis;
   warning_count: number;
   recommended_backend: ExecutionBackend;
 }
@@ -323,6 +341,19 @@ export interface RenderPlanSegment {
   duration_sec: number;
   motion: MotionName;
   broll_concept: string;
+}
+
+export interface CaptionTemplate {
+  id: string;
+  font_family: string;
+  font_size: number;
+  position: "bottom_center" | "center" | "top_center";
+  background: string;
+  text_color: string;
+  stroke_color: string;
+  stroke_width: number;
+  animation: "none" | "word_by_word" | "karaoke" | "typewriter";
+  max_chars_per_line: number;
 }
 
 export interface RenderPlanAssetManifest {
@@ -338,6 +369,7 @@ export interface RenderPlan {
   engine: ExecutionBackend;
   output_filename: string;
   segments: RenderPlanSegment[];
+  caption_template: CaptionTemplate;
   asset_manifest: RenderPlanAssetManifest;
   qa_checklist: string[];
   warnings: string[];

@@ -10,6 +10,8 @@ test("prints request analysis report in JSON", () => {
     request_id?: string;
     recommended_backend?: string;
     warning_count?: number;
+    micro_signals?: { motion_variation?: number; hook_strength?: number };
+    hook_analysis?: { type?: string; score?: number };
     readiness?: { render?: boolean; publish?: boolean };
   };
 
@@ -20,6 +22,8 @@ test("prints request analysis report in JSON", () => {
   assert.equal(parsed.readiness?.publish, true);
   assert.equal(typeof parsed.request_id, "string");
   assert.equal(typeof parsed.warning_count, "number");
+  assert.equal(typeof parsed.micro_signals?.motion_variation, "number");
+  assert.equal(typeof parsed.hook_analysis?.score, "number");
 });
 
 test("prints short human-readable analysis summary", () => {

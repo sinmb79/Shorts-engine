@@ -37,3 +37,6 @@ docs/superpowers/
 *.execute-result.json
 *.tts-result.json
 *.upload-result.json
+data/
+.sea/
+release/

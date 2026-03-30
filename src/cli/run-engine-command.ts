@@ -6,6 +6,7 @@ import {
   EXIT_CODE_VALIDATION_FAILURE,
 } from "./exit-codes.js";
 import { loadEngineRequest } from "./load-engine-request.js";
+import { loadRuntimeConfig } from "./load-runtime-config.js";
 import { renderOutput } from "./render-output.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
 
@@ -39,7 +40,11 @@ export async function runEngineCommand(
       };
     }
 
-    const planningContext = resolvePlanningContext(loaded.request);
+    const runtimeConfig = await loadRuntimeConfig(requestPath, loaded.request);
+    const planningContext = resolvePlanningContext(
+      loaded.request,
+      runtimeConfig.resolved_config,
+    );
 
     return {
       exitCode: EXIT_CODE_SUCCESS,

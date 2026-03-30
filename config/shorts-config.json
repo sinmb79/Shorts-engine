@@ -1,0 +1,38 @@
+{
+  "_comment": "Shorts production defaults shared across request-driven commands",
+  "enabled": true,
+  "schedule": {
+    "frequency": "daily",
+    "times": ["10:30", "16:00"],
+    "max_per_day": 2
+  },
+  "input_dirs": {
+    "images": "input/images/",
+    "videos": "input/videos/",
+    "scripts": "input/scripts/",
+    "audio": "input/audio/"
+  },
+  "assets": {
+    "characters": {
+      "default_host": {
+        "name": "nova",
+        "display_name": "Nova",
+        "default_pose": "assets/characters/nova/default.png",
+        "poses_dir": "assets/characters/nova/poses/",
+        "expressions_dir": "assets/characters/nova/expressions/"
+      }
+    },
+    "corner_character_map": {
+      "explainer": "default_host",
+      "viral": "default_host",
+      "analysis": "default_host"
+    },
+    "character_overlay": {
+      "enabled": true,
+      "position": "bottom_right",
+      "scale_width": 300,
+      "margin_right": 40,
+      "margin_bottom": 250
+    }
+  }
+}

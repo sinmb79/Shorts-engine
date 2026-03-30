@@ -9,6 +9,7 @@ export function renderDoctorOutput(result: DoctorResult, json: boolean): string 
     `Doctor status: ${result.status}`,
     `Checks: ${result.checks.length}`,
     `Warnings: ${result.warnings.length}`,
+    ...result.checks.map((check) => `${check.name}: ${check.message}`),
   ];
 
   return `${lines.join("\n")}\n`;

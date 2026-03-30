@@ -2,6 +2,9 @@ import type { PlanningContext } from "../cli/resolve-planning-context.js";
 import type { VideoGenerationAdapter, VideoGenerationPrompt } from "../adapters/video/video-generation-adapter.js";
 import type { ExecutionBackend } from "../domain/contracts.js";
 import { resolveAdapter as defaultResolveAdapter } from "../adapters/video/adapter-registry.js";
+import { aggregateScore, scoreMicroSignals } from "../quality/micro-signals.js";
+import { createRequestId } from "../shared/request-id.js";
+import type { PromptTrackerLike } from "../tracking/prompt-tracker.js";
 
 export interface ExecuteNodeResult {
   node_id: string;
@@ -27,6 +30,8 @@ export interface ExecuteVideoResult {
 
 export interface ExecuteOptions {
   dry_run: boolean;
+  requestId?: string;
+  promptTracker?: PromptTrackerLike;
   resolveAdapter?: (backend: ExecutionBackend) => Promise<VideoGenerationAdapter>;
 }
 
@@ -60,9 +65,12 @@ export async function executeVideoGeneration(
 ): Promise<ExecuteVideoResult> {
   const resolve = options.resolveAdapter ?? defaultResolveAdapter;
   const prompt = buildPromptFromPlanningContext(context);
+  const requestId = options.requestId ?? createRequestId(context.effective_request.base);
+  const microSignals = scoreMicroSignals(context);
+  const qualityScore = aggregateScore(microSignals);
   const nodes: ExecuteNodeResult[] = [];
 
-  for (const node of context.execution_plan.nodes) {
+  for (const [index, node] of context.execution_plan.nodes.entries()) {
     const adapter = await resolve(node.backend);
     const result = await adapter.generate(prompt, { dry_run: options.dry_run });
 
@@ -82,6 +90,22 @@ export async function executeVideoGeneration(
     }
 
     nodes.push(nodeResult);
+
+    options.promptTracker?.record({
+      engine: adapter.name,
+      prompt_text: [
+        prompt.text_prompt,
+        `motion:${prompt.motion_notes ?? "n/a"}`,
+        `styles:${prompt.style_tags.join(",")}`,
+      ].join(" | "),
+      request_id: requestId,
+      platform: context.effective_request.base.intent.platform,
+      corner: context.effective_request.base.intent.theme,
+      duration_sec: prompt.duration_sec,
+      cost_usd: Number((node.estimated_cost ?? 0).toFixed(2)),
+      quality_score: qualityScore,
+      micro_signals: JSON.stringify(microSignals),
+    });
   }
 
   const summary = {

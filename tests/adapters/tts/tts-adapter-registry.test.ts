@@ -29,7 +29,7 @@ test("resolveTtsAdapter falls back to local when sora backend has no OPENAI_API_
   if (saved !== undefined) process.env["OPENAI_API_KEY"] = saved;
 });
 
-test("resolveTtsAdapter falls back to local when premium backends all unavailable", async () => {
+test("resolveTtsAdapter falls back to edge_tts when premium API providers are unavailable", async () => {
   const keys = ["ELEVENLABS_API_KEY", "OPENAI_API_KEY", "GOOGLE_TTS_API_KEY"];
   const saved: Record<string, string | undefined> = {};
   for (const k of keys) {
@@ -37,7 +37,7 @@ test("resolveTtsAdapter falls back to local when premium backends all unavailabl
     delete process.env[k];
   }
   const adapter = await resolveTtsAdapter("premium");
-  assert.equal(adapter.name, "local");
+  assert.equal(adapter.name, "edge_tts");
   for (const k of keys) {
     if (saved[k] !== undefined) process.env[k] = saved[k];
   }
@@ -46,6 +46,7 @@ test("resolveTtsAdapter falls back to local when premium backends all unavailabl
 test("TTS_ADAPTER_REGISTRY contains all four adapter names", () => {
   const names = Object.keys(TTS_ADAPTER_REGISTRY);
   assert.ok(names.includes("local"));
+  assert.ok(names.includes("edge_tts"));
   assert.ok(names.includes("elevenlabs"));
   assert.ok(names.includes("openai_tts"));
   assert.ok(names.includes("google_tts"));

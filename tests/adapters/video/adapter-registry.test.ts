@@ -21,15 +21,12 @@ test("resolveAdapter returns local adapter for 'cache' backend", async () => {
 });
 
 test("resolveAdapter falls back to local when sora API key is absent", async () => {
-  const saved = process.env["SORA_API_KEY"];
-  delete process.env["SORA_API_KEY"];
   const adapter = await resolveAdapter("sora");
   assert.equal(adapter.name, "local");
-  if (saved !== undefined) process.env["SORA_API_KEY"] = saved;
 });
 
 test("resolveAdapter falls back to local when premium backends are all unavailable", async () => {
-  const keys = ["KLING_API_KEY", "RUNWAY_API_KEY", "SORA_API_KEY"];
+  const keys = ["KLING_API_KEY", "GEMINI_API_KEY", "FAL_API_KEY", "RUNWAY_API_KEY"];
   const saved: Record<string, string | undefined> = {};
   for (const k of keys) {
     saved[k] = process.env[k];
@@ -42,10 +39,62 @@ test("resolveAdapter falls back to local when premium backends are all unavailab
   }
 });
 
-test("ADAPTER_REGISTRY contains all four adapter names", () => {
+test("resolveAdapter prefers veo3 in premium cascade when only GEMINI_API_KEY is set", async () => {
+  const keys = ["KLING_API_KEY", "GEMINI_API_KEY", "FAL_API_KEY", "RUNWAY_API_KEY"];
+  const saved: Record<string, string | undefined> = {};
+
+  for (const key of keys) {
+    saved[key] = process.env[key];
+    delete process.env[key];
+  }
+
+  process.env["GEMINI_API_KEY"] = "test-gemini";
+
+  try {
+    const adapter = await resolveAdapter("premium");
+    assert.equal(adapter.name, "veo3");
+  } finally {
+    for (const key of keys) {
+      if (saved[key] !== undefined) {
+        process.env[key] = saved[key] as string;
+      } else {
+        delete process.env[key];
+      }
+    }
+  }
+});
+
+test("resolveAdapter prefers seedance2 in premium cascade when only FAL_API_KEY is set", async () => {
+  const keys = ["KLING_API_KEY", "GEMINI_API_KEY", "FAL_API_KEY", "RUNWAY_API_KEY"];
+  const saved: Record<string, string | undefined> = {};
+
+  for (const key of keys) {
+    saved[key] = process.env[key];
+    delete process.env[key];
+  }
+
+  process.env["FAL_API_KEY"] = "test-fal";
+
+  try {
+    const adapter = await resolveAdapter("premium");
+    assert.equal(adapter.name, "seedance2");
+  } finally {
+    for (const key of keys) {
+      if (saved[key] !== undefined) {
+        process.env[key] = saved[key] as string;
+      } else {
+        delete process.env[key];
+      }
+    }
+  }
+});
+
+test("ADAPTER_REGISTRY contains local, runway, kling, veo3, and seedance2 adapters", () => {
   const names = Object.keys(ADAPTER_REGISTRY);
   assert.ok(names.includes("local"));
-  assert.ok(names.includes("sora"));
   assert.ok(names.includes("runway"));
   assert.ok(names.includes("kling"));
+  assert.ok(names.includes("veo3"));
+  assert.ok(names.includes("seedance2"));
+  assert.equal(names.includes("sora"), false);
 });

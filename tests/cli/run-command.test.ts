@@ -1,18 +1,25 @@
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import * as os from "node:os";
+import * as path from "node:path";
 import { test } from "node:test";
 import * as assert from "node:assert/strict";
 
+import { loadFixture } from "../helpers/load-fixture.js";
 import { runCli } from "../helpers/run-cli.js";
+import { writeJson, writeRuntimeConfigSet } from "../helpers/runtime-config-fixture.js";
 
 test("prints structured JSON for run --json", () => {
   const result = runCli(["run", "tests/fixtures/valid-low-cost-request.json", "--json"]);
   const parsed = JSON.parse(result.stdout) as {
     request_id?: string;
     validation?: { valid?: boolean };
+    resolved_config?: unknown;
   };
 
   assert.equal(result.exitCode, 0);
   assert.equal(parsed.validation?.valid, true);
   assert.equal(typeof parsed.request_id, "string");
+  assert.equal("resolved_config" in parsed, false);
 });
 
 test("returns exit code 2 for validation failures", () => {
@@ -126,4 +133,23 @@ test("prints platform summary lines in human-readable output", () => {
   assert.match(result.stdout, /Platform: youtube_shorts/);
   assert.match(result.stdout, /Effective duration: 20s/);
   assert.match(result.stdout, /Warnings: 0/);
+});
+
+test("run command loads runtime config before planning", async () => {
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), "shorts-engine-run-"));
+  const requestPath = path.join(tempDir, "requests", "request.json");
+  const request = await loadFixture("valid-low-cost-request.json");
+
+  try {
+    await writeRuntimeConfigSet(tempDir);
+    await writeFile(path.join(tempDir, "config", "engine.json"), "{ invalid json\n", "utf8");
+    await writeJson(requestPath, request);
+
+    const result = runCli(["run", requestPath], { cwd: tempDir });
+
+    assert.equal(result.exitCode, 1);
+    assert.match(result.stdout, /Fatal error: 설정 파일 JSON 형식이 올바르지 않습니다/u);
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
 });

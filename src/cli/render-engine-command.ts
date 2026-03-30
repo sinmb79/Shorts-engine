@@ -7,6 +7,7 @@ import {
   EXIT_CODE_VALIDATION_FAILURE,
 } from "./exit-codes.js";
 import { loadEngineRequest } from "./load-engine-request.js";
+import { loadRuntimeConfig } from "./load-runtime-config.js";
 import { renderOutput } from "./render-output.js";
 import { renderRenderPlanOutput } from "./render-render-plan-output.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
@@ -42,7 +43,11 @@ export async function renderEngineCommand(
       };
     }
 
-    const planningContext = resolvePlanningContext(loaded.request);
+    const runtimeConfig = await loadRuntimeConfig(requestPath, loaded.request);
+    const planningContext = resolvePlanningContext(
+      loaded.request,
+      runtimeConfig.resolved_config,
+    );
     const promptResult = buildPromptResult({
       brollPlan: planningContext.broll_plan,
       effectiveRequest: planningContext.effective_request,
@@ -50,6 +55,7 @@ export async function renderEngineCommand(
       motionPlan: planningContext.motion_plan,
       novelShortsPlan: planningContext.novel_shorts_plan,
       platformOutputSpec: planningContext.platform_output_spec,
+      resolvedConfig: planningContext.resolved_config,
       routing: planningContext.routing,
       scoring: planningContext.scoring,
     });

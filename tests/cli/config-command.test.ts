@@ -19,6 +19,20 @@ test("prints built-in profile catalog for config --json", () => {
   assert.ok(parsed.supported_commands?.includes("publish"));
 });
 
+test("config --json keeps the same top-level shape", () => {
+  const result = runCli(["config", "--json"]);
+  const parsed = JSON.parse(result.stdout) as Record<string, unknown>;
+
+  assert.equal(result.exitCode, 0);
+  assert.deepEqual(Object.keys(parsed).sort(), [
+    "config_version",
+    "default_profile",
+    "profiles",
+    "schema_version",
+    "supported_commands",
+  ]);
+});
+
 test("prints short human-readable config summary", () => {
   const result = runCli(["config"]);
 

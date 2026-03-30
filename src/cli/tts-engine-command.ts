@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { resolveTtsAdapter } from "../adapters/tts/tts-adapter-registry.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
 import { loadEngineRequest } from "./load-engine-request.js";
+import { loadRuntimeConfig } from "./load-runtime-config.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
   EXIT_CODE_SUCCESS,
@@ -46,7 +47,8 @@ export async function ttsEngineCommand(
       };
     }
 
-    const context = resolvePlanningContext(loaded.request);
+    const runtimeConfig = await loadRuntimeConfig(requestPath, loaded.request);
+    const context = resolvePlanningContext(loaded.request, runtimeConfig.resolved_config);
     const result = await executeTts(context, {
       dry_run: options.dry_run,
       resolveTtsAdapter,

@@ -8,10 +8,11 @@ import { buildPublishPlan } from "../../src/publish/build-publish-plan.js";
 import type { EngineRequest } from "../../src/domain/contracts.js";
 import { createRequestId } from "../../src/shared/request-id.js";
 import { loadFixture } from "../helpers/load-fixture.js";
+import { createResolvedConfig } from "../helpers/resolved-config.js";
 
 test("builds a platform-aware publish manifest from render output", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const planningContext = resolvePlanningContext(request);
+  const planningContext = resolvePlanningContext(request, createResolvedConfig());
   const promptResult = buildPromptResult({
     brollPlan: planningContext.broll_plan,
     effectiveRequest: planningContext.effective_request,
@@ -19,6 +20,7 @@ test("builds a platform-aware publish manifest from render output", async () => 
     motionPlan: planningContext.motion_plan,
     novelShortsPlan: planningContext.novel_shorts_plan,
     platformOutputSpec: planningContext.platform_output_spec,
+    resolvedConfig: planningContext.resolved_config,
     routing: planningContext.routing,
     scoring: planningContext.scoring,
   });

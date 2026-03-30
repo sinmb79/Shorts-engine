@@ -1,6 +1,7 @@
 // src/adapters/tts/tts-adapter-registry.ts
 import type { ExecutionBackend } from "../../domain/contracts.js";
 import type { TtsAdapter } from "./tts-adapter.js";
+import { EdgeTtsAdapter } from "./edge-tts-adapter.js";
 import { ElevenLabsAdapter } from "./elevenlabs-adapter.js";
 import { GoogleTtsAdapter } from "./google-tts-adapter.js";
 import { LocalTtsAdapter } from "./local-tts-adapter.js";
@@ -11,6 +12,7 @@ import { OpenAiTtsAdapter } from "./openai-tts-adapter.js";
 // They are not direct ExecutionBackend values.
 export const TTS_ADAPTER_REGISTRY: Record<string, TtsAdapter> = {
   local: new LocalTtsAdapter(),
+  edge_tts: new EdgeTtsAdapter(),
   elevenlabs: new ElevenLabsAdapter(),
   openai_tts: new OpenAiTtsAdapter(),
   google_tts: new GoogleTtsAdapter(),
@@ -39,6 +41,8 @@ export async function resolveTtsAdapter(
       if (await openai.isAvailable()) return openai;
       const google = TTS_ADAPTER_REGISTRY["google_tts"]!;
       if (await google.isAvailable()) return google;
+      const edge = TTS_ADAPTER_REGISTRY["edge_tts"]!;
+      if (await edge.isAvailable()) return edge;
       return local;
     }
 

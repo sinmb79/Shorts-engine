@@ -1,44 +1,43 @@
 import type {
   AnalyzeResult,
-  LearningState,
-  MotionPlan,
-  PlatformOutputSpec,
-  RoutingDecision,
-  ScoringResult,
 } from "../domain/contracts.js";
+import type { PlanningContext } from "../cli/resolve-planning-context.js";
+import { analyzeHook } from "../quality/hook-optimizer.js";
+import { aggregateScore, scoreMicroSignals } from "../quality/micro-signals.js";
 
 export function buildAnalysisReport(input: {
   requestId: string;
-  learningState: LearningState;
-  motionPlan: MotionPlan;
-  platformOutputSpec: PlatformOutputSpec;
-  routing: RoutingDecision;
-  scoring: ScoringResult;
+  planningContext: PlanningContext;
 }): AnalyzeResult {
-  const {
-    requestId,
-    learningState,
-    motionPlan,
-    platformOutputSpec,
-    routing,
-    scoring,
-  } = input;
+  const { requestId, planningContext } = input;
+  const microSignals = scoreMicroSignals(planningContext);
+  const hookAnalysis = analyzeHook(planningContext);
 
   return {
     schema_version: "0.1",
     request_id: requestId,
     readiness: {
       prompt: true,
-      render: motionPlan.motion_sequence.length > 0,
-      publish: platformOutputSpec.warnings.length < 5,
+      render: planningContext.motion_plan.motion_sequence.length > 0,
+      publish: planningContext.platform_output_spec.warnings.length < 5,
     },
     risk_summary: {
-      quality_score: roundScore((scoring.candidate_score + scoring.quality_tier_score) / 2),
-      cost_risk_score: scoring.cost_risk_score,
-      learning_confidence: learningState.confidence,
+      quality_score: roundScore(
+        (
+          planningContext.scoring.candidate_score +
+          planningContext.scoring.quality_tier_score +
+          aggregateScore(microSignals)
+        ) / 3,
+      ),
+      cost_risk_score: planningContext.scoring.cost_risk_score,
+      learning_confidence: planningContext.learning_state.confidence,
     },
-    warning_count: platformOutputSpec.warnings.length + motionPlan.warnings.length,
-    recommended_backend: routing.selected_backend,
+    micro_signals: microSignals,
+    hook_analysis: hookAnalysis,
+    warning_count:
+      planningContext.platform_output_spec.warnings.length +
+      planningContext.motion_plan.warnings.length,
+    recommended_backend: planningContext.routing.selected_backend,
   };
 }
 
