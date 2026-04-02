@@ -43,3 +43,33 @@ test("accepts optional novel_project when it is well formed", async () => {
   assert.equal(result.valid, true);
   assert.equal(result.errors.length, 0);
 });
+
+test("rejects unknown studio_id values", async () => {
+  const request = await loadFixture<Record<string, unknown>>("ghibli-narrative-request.json");
+  request.studio_id = "unknown_studio";
+
+  const result = validateEngineRequest(request);
+
+  assert.equal(result.valid, false);
+  assert.equal(result.errors.some((error) => error.message.includes("studio_id")), true);
+});
+
+test("rejects malformed narrative_payload objects when they are present", async () => {
+  const request = await loadFixture<Record<string, unknown>>("ghibli-narrative-request.json");
+  request.narrative_payload = {
+    studio_id: "ghibli",
+    scene_archetype: "낯선 존재와의 첫 만남",
+    narrative_checks: {
+      contrast: true,
+    },
+    beats: [],
+  };
+
+  const result = validateEngineRequest(request);
+
+  assert.equal(result.valid, false);
+  assert.equal(
+    result.errors.some((error) => error.message.includes("narrative_payload")),
+    true,
+  );
+});

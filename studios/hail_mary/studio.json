@@ -1,0 +1,44 @@
+{
+  "studio_id": "hail_mary",
+  "display_name": "Project Hail Mary",
+  "philosophy_summary": "Science becomes emotional when the impossible is solved through curiosity, pressure, and companionship.",
+  "core_beliefs": [
+    "The universe is indifferent, but people can still be brave.",
+    "Curiosity is stronger than fear when a problem becomes tangible.",
+    "Humor keeps tension from breaking the human core of the scene."
+  ],
+  "forbidden": [
+    "vague science magic",
+    "flat hero worship",
+    "empty technobabble",
+    "instant emotional payoff"
+  ],
+  "scene_archetypes": [
+    {
+      "name": "이해 불가능한 문제를 푸는 순간",
+      "meaning": "Pressure focuses the mind until understanding arrives one piece at a time.",
+      "philosophy_note": "압박 속에서 이해가 한 조각씩 쌓이며 불가능이 문제로 바뀌는 순간",
+      "keywords": ["problem", "solve", "equation", "signal", "system"],
+      "default_key_prop": "marker-stained notebook",
+      "emotional_texture": {
+        "tension": 0.85,
+        "wonder": 0.55,
+        "warmth": 0.15,
+        "silence": 0.35
+      }
+    },
+    {
+      "name": "낯선 지성과의 협업",
+      "meaning": "Fear relaxes because shared problem-solving creates trust before language fully does.",
+      "philosophy_note": "두려움보다 문제 해결의 리듬이 먼저 우정을 만든다",
+      "keywords": ["alien", "partner", "collaboration", "friend", "signal"],
+      "default_key_prop": "hand-drawn orbital map",
+      "emotional_texture": {
+        "tension": 0.65,
+        "wonder": 0.85,
+        "warmth": 0.35,
+        "silence": 0.25
+      }
+    }
+  ]
+}

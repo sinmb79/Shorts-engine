@@ -42,3 +42,16 @@ test("prints human-readable prompt output", () => {
   assert.match(result.stdout, /Engine: local/);
   assert.match(result.stdout, /Main prompt:/);
 });
+
+test("includes narrative DNA guidance in prompt output when studio_id is present", () => {
+  const result = runCli(["prompt", "tests/fixtures/ghibli-narrative-request.json", "--json"]);
+  const parsed = JSON.parse(result.stdout) as {
+    main_prompt?: string;
+    style_descriptor?: string;
+  };
+
+  assert.equal(result.exitCode, 0);
+  assert.match(parsed.main_prompt ?? "", /Scene archetype:/);
+  assert.match(parsed.main_prompt ?? "", /Philosophy note:/);
+  assert.match(parsed.style_descriptor ?? "", /studio: ghibli/);
+});

@@ -46,6 +46,24 @@ export function normalizeRequest(request: EngineRequest): NormalizedRequest {
             },
           }
         : {}),
+      ...(request.studio_id ? { studio_id: request.studio_id } : {}),
+      ...(request.narrative_payload
+        ? {
+            narrative_payload: {
+              ...request.narrative_payload,
+              scene_archetype: request.narrative_payload.scene_archetype.trim(),
+              philosophy_note: request.narrative_payload.philosophy_note.trim(),
+              key_prop: request.narrative_payload.key_prop.trim(),
+              beats: request.narrative_payload.beats.map((beat) => ({
+                ...beat,
+                label: beat.label.trim(),
+                scene: beat.scene.trim(),
+                subtext: beat.subtext.trim(),
+                philosophy_note: beat.philosophy_note.trim(),
+              })),
+            },
+          }
+        : {}),
     },
     derived: {
       resolved_platform_profile: request.intent.platform,

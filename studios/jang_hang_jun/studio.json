@@ -1,0 +1,44 @@
+{
+  "studio_id": "jang_hang_jun",
+  "display_name": "Jang Hang-jun Studio",
+  "philosophy_summary": "Ordinary routines reveal moral weight when humor, dignity, and small choices share the same frame.",
+  "core_beliefs": [
+    "Meaning lives in how people endure everyday pressure together.",
+    "Meals, errands, and pauses can carry more truth than declarations.",
+    "Warmth and melancholy should sit beside each other without being resolved too quickly."
+  ],
+  "forbidden": [
+    "clean heroic framing",
+    "sentimentality by force",
+    "villain simplification",
+    "instant catharsis"
+  ],
+  "scene_archetypes": [
+    {
+      "name": "밥상 위의 거리감",
+      "meaning": "A shared table exposes the emotional distance people can no longer hide.",
+      "philosophy_note": "일상의 가장 평범한 자리에서 관계의 진짜 온도가 드러나는 순간",
+      "keywords": ["meal", "table", "family", "dinner", "workplace"],
+      "default_key_prop": "half-finished soup bowl",
+      "emotional_texture": {
+        "tension": 0.55,
+        "wonder": 0.15,
+        "warmth": 0.65,
+        "silence": 0.7
+      }
+    },
+    {
+      "name": "비켜갈 수 없는 선택",
+      "meaning": "The decision matters because the situation stays ordinary while the heart becomes heavy.",
+      "philosophy_note": "거대한 사건이 아니라 평범한 상황이 사람을 더 어렵게 만든다",
+      "keywords": ["choice", "salary", "resign", "promise", "responsibility"],
+      "default_key_prop": "creased pay envelope",
+      "emotional_texture": {
+        "tension": 0.75,
+        "wonder": 0.1,
+        "warmth": 0.45,
+        "silence": 0.6
+      }
+    }
+  ]
+}

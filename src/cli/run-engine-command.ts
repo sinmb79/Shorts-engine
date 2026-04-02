@@ -1,4 +1,4 @@
-import type { EngineRunResult } from "../domain/contracts.js";
+import type { EngineRunResult, NarrativePayload } from "../domain/contracts.js";
 import { createRequestId } from "../shared/request-id.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
@@ -32,7 +32,18 @@ export async function runEngineCommand(
             isRecord(loaded.raw_request) && typeof loaded.raw_request['version'] === 'string'
               ? loaded.raw_request['version']
               : '0.1',
-            loaded.validation, null, null, null, null, null, null, null, null, null, null,
+            loaded.validation,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
           ),
           options.json,
         ),
@@ -48,6 +59,7 @@ export async function runEngineCommand(
           requestId,
           loaded.request.version,
           loaded.validation,
+          planningContext.narrative_payload,
           planningContext.normalized_request,
           planningContext.platform_output_spec,
           planningContext.novel_shorts_plan,
@@ -82,6 +94,7 @@ export async function runEngineCommand(
       null,
       null,
       null,
+      null,
     );
 
     const output = options.json
@@ -106,6 +119,7 @@ function createRunResult(
   requestId: string,
   schemaVersion: string,
   validation: EngineRunResult["validation"],
+  narrativePayload: NarrativePayload | null,
   normalizedRequest: EngineRunResult["normalized_request"],
   platformOutputSpec: EngineRunResult["platform_output_spec"],
   novelShortsPlan: EngineRunResult["novel_shorts_plan"],
@@ -121,6 +135,7 @@ function createRunResult(
     schema_version: schemaVersion,
     request_id: requestId,
     validation,
+    narrative_payload: narrativePayload,
     normalized_request: normalizedRequest,
     platform_output_spec: platformOutputSpec,
     novel_shorts_plan: novelShortsPlan,

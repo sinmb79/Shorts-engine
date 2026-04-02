@@ -11,6 +11,8 @@ import { promptEngineCommand } from "./prompt-engine-command.js";
 import { publishEngineCommand } from "./publish-engine-command.js";
 import { renderEngineCommand } from "./render-engine-command.js";
 import { runEngineCommand } from "./run-engine-command.js";
+import { scenarioEngineCommand } from "./scenario-engine-command.js";
+import { studiosEngineCommand } from "./studios-engine-command.js";
 import { wizardEngineCommand } from "./wizard-engine-command.js";
 import { executeEngineCommand } from "./execute-engine-command.js";
 import { ttsEngineCommand } from "./tts-engine-command.js";
@@ -25,21 +27,30 @@ const simulate = flags.includes("--simulate");
 
 if (!command) {
   process.stderr.write(
-    "Usage: engine <run|prompt|create|wizard|execute|tts|upload|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+    "Usage: engine <run|prompt|create|wizard|execute|tts|upload|config|doctor|analyze|render|publish|scenario|studios> [request.json] [--json] [--simulate]\n",
   );
   process.exit(EXIT_CODE_INTERNAL_ERROR);
 }
 
 const dry_run = flags.includes("--dry-run");
-const result = await executeCommand(command, positionals, { json, simulate, dry_run });
+const result = await executeCommand(command, positionals, rest, { json, simulate, dry_run });
 process.stdout.write(result.output);
 process.exit(result.exitCode);
 
 async function executeCommand(
   commandName: string,
   positionals: string[],
+  rawArgs: string[],
   options: { json: boolean; simulate: boolean; dry_run: boolean },
 ) {
+  if (commandName === "scenario") {
+    return scenarioEngineCommand(rawArgs, { json: options.json });
+  }
+
+  if (commandName === "studios") {
+    return studiosEngineCommand(rawArgs, { json: options.json });
+  }
+
   if (commandName === "config") {
     return configEngineCommand({ json: options.json });
   }
@@ -112,7 +123,7 @@ async function executeCommand(
   ) {
     return {
       exitCode: EXIT_CODE_INTERNAL_ERROR,
-      output: "Usage: engine <run|prompt|create|wizard|execute|tts|upload|config|doctor|analyze|render|publish> [request.json] [--json] [--simulate]\n",
+      output: "Usage: engine <run|prompt|create|wizard|execute|tts|upload|config|doctor|analyze|render|publish|scenario|studios> [request.json] [--json] [--simulate]\n",
     };
   }
 

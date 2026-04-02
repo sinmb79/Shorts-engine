@@ -2,6 +2,7 @@ import type {
   BrollPlan,
   LearningState,
   MotionPlan,
+  NarrativePayload,
   NormalizedRequest,
   NovelShortsPlan,
   PlatformOutputSpec,
@@ -15,6 +16,7 @@ export function buildPromptResult(input: {
   effectiveRequest: NormalizedRequest;
   learningState: LearningState;
   motionPlan: MotionPlan;
+  narrativePayload?: NarrativePayload | null;
   platformOutputSpec: PlatformOutputSpec;
   routing: RoutingDecision;
   scoring: ScoringResult;
@@ -25,6 +27,7 @@ export function buildPromptResult(input: {
     effectiveRequest,
     learningState,
     motionPlan,
+    narrativePayload,
     novelShortsPlan,
     platformOutputSpec,
     routing,
@@ -45,10 +48,12 @@ export function buildPromptResult(input: {
       platformOutputSpec,
       motionPlan,
       brollPlan,
+      narrativePayload ?? null,
       novelShortsPlan,
     ),
     negative_prompt: "unsafe, graphic, policy-violating content",
     style_descriptor: [
+      `studio: ${narrativePayload?.studio_id ?? effectiveRequest.base.studio_id ?? "default"}`,
       `${effectiveRequest.base.style.pacing_profile} pacing`,
       `${effectiveRequest.base.style.camera_language} camera`,
       `${effectiveRequest.base.intent.theme} tone`,
@@ -69,6 +74,7 @@ function buildMainPrompt(
   platformOutputSpec: PlatformOutputSpec,
   motionPlan: MotionPlan,
   brollPlan: BrollPlan,
+  narrativePayload: NarrativePayload | null,
   novelShortsPlan: NovelShortsPlan | null,
 ): string {
   const sections = [
@@ -81,6 +87,12 @@ function buildMainPrompt(
     `Hook motion: ${motionPlan.hook_motion.selected}.`,
     `Hook B-roll concept: ${brollPlan.segments[0]?.concept ?? "n/a"}.`,
   ];
+
+  if (narrativePayload) {
+    sections.push(`Scene archetype: ${narrativePayload.scene_archetype}.`);
+    sections.push(`Philosophy note: ${narrativePayload.philosophy_note}.`);
+    sections.push(`Key prop: ${narrativePayload.key_prop}.`);
+  }
 
   if (novelShortsPlan) {
     sections.push(`Novel highlight: ${novelShortsPlan.highlight_candidate}.`);

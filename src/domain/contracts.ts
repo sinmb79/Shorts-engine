@@ -1,5 +1,8 @@
 export type Platform = "youtube_shorts" | "tiktok" | "instagram_reels";
 
+export const STUDIO_IDS = ["ghibli", "hail_mary", "jang_hang_jun"] as const;
+export type StudioId = (typeof STUDIO_IDS)[number];
+
 export type BudgetTier = "low" | "balanced" | "high";
 
 export type QualityTier = "low" | "balanced" | "premium";
@@ -43,6 +46,58 @@ export interface EngineOutput {
   type: string;
 }
 
+export interface EmotionalTexture {
+  tension: number;
+  wonder: number;
+  warmth: number;
+  silence: number;
+}
+
+export interface NarrativeChecks {
+  contrast: boolean;
+  specificity: boolean;
+  subtext: boolean;
+  forbidden_clear: boolean;
+}
+
+export interface NarrativeBeat {
+  beat_id: string;
+  label: string;
+  scene: string;
+  subtext: string;
+  emotional_texture: EmotionalTexture;
+  philosophy_note: string;
+}
+
+export interface NarrativePayload {
+  studio_id: StudioId;
+  scene_archetype: string;
+  philosophy_note: string;
+  emotional_texture: EmotionalTexture;
+  narrative_checks: NarrativeChecks;
+  key_prop: string;
+  key_silence_sec: number;
+  beats: NarrativeBeat[];
+}
+
+export interface StudioSceneArchetype {
+  name: string;
+  meaning: string;
+  philosophy_note: string;
+  keywords?: string[];
+  default_key_prop?: string;
+  emotional_texture: EmotionalTexture;
+}
+
+export interface StudioDefinition {
+  studio_id: StudioId;
+  display_name: string;
+  philosophy_summary: string;
+  core_beliefs: string[];
+  forbidden: string[];
+  scene_archetypes: StudioSceneArchetype[];
+}
+
 export interface LearningHistory {
   completed_outputs: number;
   accepted_suggestions: number;
@@ -67,11 +122,13 @@ export interface NovelProject {
 
 export interface EngineRequest {
   version: string;
+  studio_id?: StudioId;
   intent: EngineIntent;
   constraints: EngineConstraints;
   style: EngineStyle;
   backend: EngineBackend;
   output: EngineOutput;
+  narrative_payload?: NarrativePayload;
   learning_history?: LearningHistory;
   novel_project?: NovelProject;
 }
@@ -440,6 +497,7 @@ export interface EngineRunResult {
   schema_version: string;
   request_id: string;
   validation: ValidationResult;
+  narrative_payload?: NarrativePayload | null;
   normalized_request: NormalizedRequest | null;
   platform_output_spec: PlatformOutputSpec | null;
   novel_shorts_plan: NovelShortsPlan | null;

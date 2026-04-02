@@ -8,6 +8,8 @@ export function renderOutput(result: EngineRunResult, json: boolean): string {
   const lines = [
     `Request ID: ${result.request_id}`,
     `Validation: ${result.validation.valid ? "valid" : "invalid"}`,
+    `Studio: ${result.narrative_payload?.studio_id ?? "n/a"}`,
+    `Scene archetype: ${result.narrative_payload?.scene_archetype ?? "n/a"}`,
     `Platform: ${result.platform_output_spec?.platform ?? "n/a"}`,
     `Effective duration: ${result.platform_output_spec?.effective_duration_sec ?? "n/a"}${result.platform_output_spec ? "s" : ""}`,
     `Warnings: ${result.platform_output_spec?.warnings.length ?? 0}`,

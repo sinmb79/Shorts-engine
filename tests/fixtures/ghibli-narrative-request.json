@@ -1,0 +1,33 @@
+{
+  "version": "0.1",
+  "studio_id": "ghibli",
+  "intent": {
+    "topic": "A lonely traveler meets a strange forest spirit for the first time",
+    "subject": "young traveler and forest spirit",
+    "goal": "turn uncertainty into wonder",
+    "emotion": "wonder",
+    "platform": "youtube_shorts",
+    "theme": "fantasy_encounter",
+    "duration_sec": 30
+  },
+  "constraints": {
+    "language": "en",
+    "budget_tier": "balanced",
+    "quality_tier": "balanced",
+    "visual_consistency_required": true,
+    "content_policy_safe": true
+  },
+  "style": {
+    "hook_type": "mystery",
+    "pacing_profile": "gentle_rise",
+    "caption_style": "cinematic_minimal",
+    "camera_language": "gentle_push_in"
+  },
+  "backend": {
+    "preferred_engine": "local",
+    "allow_fallback": true
+  },
+  "output": {
+    "type": "video_prompt"
+  }
+}

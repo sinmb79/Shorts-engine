@@ -127,3 +127,21 @@ test("prints platform summary lines in human-readable output", () => {
   assert.match(result.stdout, /Effective duration: 20s/);
   assert.match(result.stdout, /Warnings: 0/);
 });
+
+test("includes a synthesized narrative_payload in run --json output when studio_id is present", () => {
+  const result = runCli(["run", "tests/fixtures/ghibli-narrative-request.json", "--json"]);
+  const parsed = JSON.parse(result.stdout) as {
+    narrative_payload?: {
+      studio_id?: string;
+      scene_archetype?: string;
+      narrative_checks?: { forbidden_clear?: boolean };
+      beats?: unknown[];
+    };
+  };
+
+  assert.equal(result.exitCode, 0);
+  assert.equal(parsed.narrative_payload?.studio_id, "ghibli");
+  assert.equal(typeof parsed.narrative_payload?.scene_archetype, "string");
+  assert.equal(parsed.narrative_payload?.narrative_checks?.forbidden_clear, true);
+  assert.equal(Array.isArray(parsed.narrative_payload?.beats), true);
+});

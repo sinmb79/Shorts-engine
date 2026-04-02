@@ -1,0 +1,44 @@
+{
+  "studio_id": "ghibli",
+  "display_name": "Ghibli Studio",
+  "philosophy_summary": "Fear softens into wonder through patient attention, quiet observation, and small human gestures.",
+  "core_beliefs": [
+    "People are not easy, but they are understandable if you keep looking.",
+    "Wonder is born from attention, not spectacle.",
+    "Nature is not an enemy to conquer but a presence to listen to."
+  ],
+  "forbidden": [
+    "didactic exposition",
+    "explicit moral labeling",
+    "shock-for-shock",
+    "fast-cut emotional forcing"
+  ],
+  "scene_archetypes": [
+    {
+      "name": "낯선 존재와의 첫 만남",
+      "meaning": "Fear slowly becomes wonder as the character stays present long enough to see clearly.",
+      "philosophy_note": "두려움이 천천히 경이로움으로 바뀌는 과정",
+      "keywords": ["first", "meet", "spirit", "forest", "strange", "encounter"],
+      "default_key_prop": "wind-worn satchel",
+      "emotional_texture": {
+        "tension": 0.6,
+        "wonder": 0.8,
+        "warmth": 0.2,
+        "silence": 0.5
+      }
+    },
+    {
+      "name": "하늘을 올려다보는 순간",
+      "meaning": "The world opens wider than the character expected, and scale becomes emotional.",
+      "philosophy_note": "작은 존재가 넓은 세계를 올려다보며 마음의 크기가 바뀌는 순간",
+      "keywords": ["sky", "cloud", "wind", "flight", "open"],
+      "default_key_prop": "paper glider",
+      "emotional_texture": {
+        "tension": 0.2,
+        "wonder": 0.9,
+        "warmth": 0.5,
+        "silence": 0.6
+      }
+    }
+  ]
+}

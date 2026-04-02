@@ -4,6 +4,7 @@ import type {
   ExecutionPlan,
   LearningState,
   MotionPlan,
+  NarrativePayload,
   NormalizedRequest,
   NovelShortsPlan,
   PlatformOutputSpec,
@@ -24,8 +25,10 @@ import { resolvePlatformOutputSpec } from "../platform/resolve-platform-output-s
 import { buildExecutionPlan } from "../simulation/build-execution-plan.js";
 import { simulateRecovery } from "../simulation/simulate-recovery.js";
 import { resolveBrollPlan } from "../broll/resolve-broll-plan.js";
+import { resolveNarrativePayload } from "../scenario/build-narrative-payload.js";
 
 export interface PlanningContext {
+  narrative_payload: NarrativePayload | null;
   normalized_request: NormalizedRequest;
   effective_request: NormalizedRequest;
   novel_shorts_plan: NovelShortsPlan | null;
@@ -43,6 +46,7 @@ export function resolvePlanningContext(request: EngineRequest): PlanningContext 
   const normalizedRequest = normalizeRequest(request);
   const novelShortsPlan = resolveNovelShortsPlan(normalizedRequest);
   const effectiveRequest = applyNovelIntentOverrides(normalizedRequest, novelShortsPlan);
+  const narrativePayload = resolveNarrativePayload(effectiveRequest.base);
   const platformOutputSpec = resolvePlatformOutputSpec(effectiveRequest);
   const motionPlan = resolveMotionPlan(effectiveRequest, platformOutputSpec);
   const brollPlan = resolveBrollPlan(effectiveRequest, platformOutputSpec, motionPlan);
@@ -58,6 +62,7 @@ export function resolvePlanningContext(request: EngineRequest): PlanningContext 
   const recoverySimulation = simulateRecovery(executionPlan);
 
   return {
+    narrative_payload: narrativePayload,
     normalized_request: normalizedRequest,
     effective_request: effectiveRequest,
     novel_shorts_plan: novelShortsPlan,

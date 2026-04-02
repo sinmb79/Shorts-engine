@@ -1,10 +1,11 @@
-import type {
-  BudgetTier,
-  EngineRequest,
-  Platform,
-  PreferredEngine,
-  QualityTier,
-  ValidationResult,
+import {
+  STUDIO_IDS,
+  type BudgetTier,
+  type EngineRequest,
+  type Platform,
+  type PreferredEngine,
+  type QualityTier,
+  type ValidationResult,
 } from "./contracts.js";
 import { createEngineError } from "./errors.js";
 
@@ -22,6 +23,7 @@ const SUPPORTED_ENGINES = new Set<PreferredEngine>([
   "sora",
   "premium",
 ]);
+const SUPPORTED_STUDIOS = new Set<string>(STUDIO_IDS);
 
 export function validateEngineRequest(value: unknown): ValidationResult {
   const errors = validateRequest(value);
@@ -45,11 +47,13 @@ function validateRequest(value: unknown) {
 
   const errors = [
     ...validateString(value.version, "version"),
+    ...validateOptionalEnum(value.studio_id, "studio_id", SUPPORTED_STUDIOS),
     ...validateIntent(value.intent),
     ...validateConstraints(value.constraints),
     ...validateStyle(value.style),
     ...validateBackend(value.backend),
     ...validateOutput(value.output),
+    ...validateNarrativePayload(value.narrative_payload),
     ...validateLearningHistory(value.learning_history),
     ...validateNovelProject(value.novel_project),
   ];
@@ -157,6 +161,27 @@ function validateLearningHistory(value: unknown) {
   ];
 }
 
+function validateNarrativePayload(value: unknown) {
+  if (typeof value === "undefined") {
+    return [];
+  }
+
+  if (!isRecord(value)) {
+    return [missingField("narrative_payload")];
+  }
+
+  return [
+    ...validateEnum(value.studio_id, "narrative_payload.studio_id", SUPPORTED_STUDIOS),
+    ...validateString(value.scene_archetype, "narrative_payload.scene_archetype"),
+    ...validateString(value.philosophy_note, "narrative_payload.philosophy_note"),
+    ...validateNarrativeTexture(value.emotional_texture, "narrative_payload.emotional_texture"),
+    ...validateNarrativeChecks(value.narrative_checks, "narrative_payload.narrative_checks"),
+    ...validateString(value.key_prop, "narrative_payload.key_prop"),
+    ...validatePositiveInteger(value.key_silence_sec, "narrative_payload.key_silence_sec"),
+    ...validateNarrativeBeats(value.beats, "narrative_payload.beats"),
+  ];
+}
+
 function validateNovelProject(value: unknown) {
   if (typeof value === "undefined") {
     return [];
@@ -226,6 +251,18 @@ function validateOptionalBoolean(value: unknown, field: string) {
   return [missingField(field)];
 }
 
+function validateOptionalEnum<T extends string>(
+  value: unknown,
+  field: string,
+  validValues: Set<T>,
+) {
+  if (typeof value === "undefined") {
+    return [];
+  }
+
+  return validateEnum(value, field, validValues);
+}
+
 function validateEnum<T extends string>(value: unknown, field: string, validValues: Set<T>) {
   if (typeof value === "string" && validValues.has(value as T)) {
     return [];
@@ -240,6 +277,55 @@ function validateNovelMode(value: unknown, field: string) {
     field,
     new Set(["cliffhanger_short", "character_moment_short", "lore_worldbuilding_short"]),
   );
+}
+
+function validateNarrativeTexture(value: unknown, field: string) {
+  if (!isRecord(value)) {
+    return [missingField(field)];
+  }
+
+  return [
+    ...validateRangeNumber(value.tension, `${field}.tension`, 0, 1),
+    ...validateRangeNumber(value.wonder, `${field}.wonder`, 0, 1),
+    ...validateRangeNumber(value.warmth, `${field}.warmth`, 0, 1),
+    ...validateRangeNumber(value.silence, `${field}.silence`, 0, 1),
+  ];
+}
+
+function validateNarrativeChecks(value: unknown, field: string) {
+  if (!isRecord(value)) {
+    return [missingField(field)];
+  }
+
+  return [
+    ...validateBoolean(value.contrast, `${field}.contrast`),
+    ...validateBoolean(value.specificity, `${field}.specificity`),
+    ...validateBoolean(value.subtext, `${field}.subtext`),
+    ...validateBoolean(value.forbidden_clear, `${field}.forbidden_clear`),
+  ];
+}
+
+function validateNarrativeBeats(value: unknown, field: string) {
+  if (!Array.isArray(value)) {
+    return [missingField(field)];
+  }
+
+  return value.flatMap((entry, index) => validateNarrativeBeat(entry, `${field}[${index}]`));
+}
+
+function validateNarrativeBeat(value: unknown, field: string) {
+  if (!isRecord(value)) {
+    return [missingField(field)];
+  }
+
+  return [
+    ...validateString(value.beat_id, `${field}.beat_id`),
+    ...validateString(value.label, `${field}.label`),
+    ...validateString(value.scene, `${field}.scene`),
+    ...validateString(value.subtext, `${field}.subtext`),
+    ...validateNarrativeTexture(value.emotional_texture, `${field}.emotional_texture`),
+    ...validateString(value.philosophy_note, `${field}.philosophy_note`),
+  ];
 }
 
 function validateRangeNumber(
