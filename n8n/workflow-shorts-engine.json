@@ -1,0 +1,350 @@
+{
+  "name": "22B Labs - Shorts-engine CLI Bridge",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0e58e68d-5f9d-4a3b-a177-6c7b2d8f4b31",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "22b-shorts-engine",
+        "responseMode": "onReceived"
+      },
+      "id": "2fd639ef-03a7-49de-9cc3-7bd3ca5f17b7",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -840,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "mode": "runOnceForAllItems",
+        "jsCode": "const defaults = {\n  topic: 'AI workflow automation',\n  subject: 'solo creator at desk',\n  goal: 'make a short-form explainer clip',\n  emotion: 'curiosity and confidence',\n  platform: 'youtube_shorts',\n  theme: 'explainer',\n  duration_sec: 20,\n  style: 'cinematic',\n  output_format: 'generic',\n  language: 'en',\n  budget_tier: 'low',\n  quality_tier: 'balanced',\n  preferred_engine: 'local',\n  trend_aware: false,\n};\n\nconst allowedPlatforms = new Set(['youtube_shorts', 'tiktok', 'instagram_reels']);\nconst allowedOutputs = new Set(['kling', 'runway', 'veo', 'pika', 'capcut', 'generic', 'human']);\nconst stylePresets = {\n  cinematic: {\n    hook_type: 'curiosity',\n    pacing_profile: 'fast_cut',\n    caption_style: 'tiktok_viral',\n    camera_language: 'simple_push_in',\n  },\n  documentary: {\n    hook_type: 'problem_first',\n    pacing_profile: 'measured_ramp',\n    caption_style: 'clean_editorial',\n    camera_language: 'observational_handheld',\n  },\n  viral: {\n    hook_type: 'pattern_break',\n    pacing_profile: 'hyper_punchy',\n    caption_style: 'tiktok_viral',\n    camera_language: 'whip_pan',\n  },\n  editorial: {\n    hook_type: 'authority_claim',\n    pacing_profile: 'confident_climb',\n    caption_style: 'clean_editorial',\n    camera_language: 'locked_frame',\n  },\n  cozy: {\n    hook_type: 'soft_surprise',\n    pacing_profile: 'gentle_build',\n    caption_style: 'subtle_minimal',\n    camera_language: 'slow_dolly',\n  },\n};\n\nconst normalizePlatform = (value) => {\n  const platform = String(value ?? defaults.platform).trim().toLowerCase();\n  if (platform === 'youtube') return 'youtube_shorts';\n  if (platform === 'reels' || platform === 'instagram') return 'instagram_reels';\n  return allowedPlatforms.has(platform) ? platform : defaults.platform;\n};\n\nconst normalizeStyle = (value) => {\n  const key = String(value ?? defaults.style).trim().toLowerCase();\n  return stylePresets[key] ? key : defaults.style;\n};\n\nconst normalizeOutput = (value) => {\n  const output = String(value ?? defaults.output_format).trim().toLowerCase();\n  return allowedOutputs.has(output) ? output : defaults.output_format;\n};\n\nconst buildEngineCommand = ({ projectPath, requestB64, outputFormat, comfyuiUrl, telegramChatId, trendAware }) => {\n  const script = [\n    \"const fs=require('fs');\",\n    \"const path=require('path');\",\n    \"const cp=require('child_process');\",\n    \"const projectPath=process.argv[1];\",\n    \"const requestB64=process.argv[2];\",\n    \"const outputFormat=process.argv[3];\",\n    \"const comfyuiUrl=process.argv[4];\",\n    \"const telegramChatId=process.argv[5];\",\n    \"const trendAware=process.argv[6]==='true';\",\n    \"if(!projectPath){\",\n    \"  process.stdout.write(JSON.stringify({ fatal_error:'SHORTS_ENGINE_PATH is not configured', hint:'Set SHORTS_ENGINE_PATH in n8n or pass project_path in the trigger payload.', output_format:outputFormat, comfyui_url:comfyuiUrl, telegram_chat_id:telegramChatId }));\",\n    \"  process.exit(0);\",\n    \"}\",\n    \"const requestJson=Buffer.from(requestB64,'base64').toString('utf8');\",\n    \"const requestFile=path.join(projectPath,'n8n','request.runtime.json');\",\n    \"fs.mkdirSync(path.dirname(requestFile),{recursive:true});\",\n    \"fs.writeFileSync(requestFile,requestJson);\",\n    \"const args=['--prefix',projectPath,'run','engine','--','format',requestFile,'--output',outputFormat,'--json'];\",\n    \"if(trendAware) args.push('--trend-aware');\",\n    \"const result=cp.spawnSync('npm',args,{encoding:'utf8',cwd:projectPath,shell:true});\",\n    \"const stdout=String(result.stdout||'').trim();\",\n    \"const stderr=String(result.stderr||'').trim();\",\n    \"let cliResult=null;\",\n    \"try { cliResult = stdout ? JSON.parse(stdout) : null; } catch (error) { cliResult = { fatal_error:'CLI returned non-JSON output', raw_stdout:stdout }; }\",\n    \"const envelope={ project_path:projectPath, request_file:requestFile, output_format:outputFormat, comfyui_url:comfyuiUrl, telegram_chat_id:telegramChatId, cli_result:cliResult, engine_exit_code: result.status ?? 0, engine_stdout:stdout, engine_stderr:stderr };\",\n    \"process.stdout.write(JSON.stringify(envelope));\",\n  ].join('');\n\n  return `node -e \\\"${script}\\\" \\\"${projectPath}\\\" \\\"${requestB64}\\\" \\\"${outputFormat}\\\" \\\"${comfyuiUrl}\\\" \\\"${telegramChatId}\\\" \\\"${String(trendAware)}\\\"`;\n};\n\nreturn $input.all().map((item, index) => {\n  const payload = item.json.body ?? item.json ?? {};\n  const projectPath = String(payload.project_path ?? $env.SHORTS_ENGINE_PATH ?? '').trim().replace(/\\\\/g, '/').replace(/\\/$/, '');\n  const styleKey = normalizeStyle(payload.style);\n  const outputFormat = normalizeOutput(payload.output_format);\n  const request = {\n    version: '0.1',\n    intent: {\n      topic: String(payload.topic ?? defaults.topic),\n      subject: String(payload.subject ?? defaults.subject),\n      goal: String(payload.goal ?? defaults.goal),\n      emotion: String(payload.emotion ?? defaults.emotion),\n      platform: normalizePlatform(payload.platform),\n      theme: String(payload.theme ?? defaults.theme),\n      duration_sec: Number(payload.duration_sec ?? defaults.duration_sec),\n    },\n    constraints: {\n      language: String(payload.language ?? defaults.language),\n      budget_tier: String(payload.budget_tier ?? defaults.budget_tier),\n      quality_tier: String(payload.quality_tier ?? defaults.quality_tier),\n      visual_consistency_required: payload.visual_consistency_required ?? true,\n      content_policy_safe: payload.content_policy_safe ?? true,\n    },\n    style: stylePresets[styleKey],\n    backend: {\n      preferred_engine: String(payload.preferred_engine ?? defaults.preferred_engine),\n      allow_fallback: payload.allow_fallback ?? true,\n    },\n    output: {\n      type: 'video_prompt',\n    },\n  };\n\n  const requestB64 = Buffer.from(JSON.stringify(request, null, 2), 'utf8').toString('base64');\n  const comfyuiUrl = String(payload.comfyui_url ?? $env.COMFYUI_URL ?? '').trim();\n  const telegramChatId = String(payload.telegram_chat_id ?? $env.TELEGRAM_CHAT_ID ?? '').trim();\n  const trendAware = Boolean(payload.trend_aware ?? defaults.trend_aware);\n\n  return {\n    json: {\n      index,\n      source: item.json.body ? 'webhook' : 'manual',\n      input: payload,\n      request,\n      project_path: projectPath,\n      output_format: outputFormat,\n      comfyui_url: comfyuiUrl,\n      telegram_chat_id: telegramChatId,\n      trend_aware: trendAware,\n      engine_command: buildEngineCommand({\n        projectPath,\n        requestB64,\n        outputFormat,\n        comfyuiUrl,\n        telegramChatId,\n        trendAware,\n      }),\n    },\n  };\n});"
+      },
+      "id": "6f9d2f0c-44d4-469d-aaf8-e660cd45d52a",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.engine_command }}"
+      },
+      "id": "e0f8e8f7-1b65-4bf1-a59d-13fe0db8f501",
+      "name": "Execute Shorts Engine",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "language": "javaScript",
+        "mode": "runOnceForAllItems",
+        "jsCode": "return $input.all().map((item) => {\n  const raw = String(item.json.stdout ?? '').trim();\n  let parsed;\n\n  try {\n    parsed = raw ? JSON.parse(raw) : { fatal_error: 'Execute Command returned no stdout' };\n  } catch (error) {\n    parsed = {\n      fatal_error: 'Execute Command returned invalid JSON',\n      raw_stdout: raw,\n      raw_stderr: String(item.json.stderr ?? ''),\n    };\n  }\n\n  return {\n    json: {\n      ...parsed,\n      kling_prompt: parsed?.output_format === 'kling' ? parsed?.cli_result?.content ?? '' : '',\n      has_error: Boolean(parsed?.cli_result?.fatal_error || parsed?.fatal_error || parsed?.engine_exit_code),\n    },\n  };\n});"
+      },
+      "id": "3eb75483-73f9-4c7f-9a2a-88534b1b988f",
+      "name": "Parse CLI Envelope",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -20,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "format-is-kling",
+              "leftValue": "={{ $json.output_format }}",
+              "rightValue": "kling",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "679c7f65-9dc4-4d7b-a1c8-7a9bc4584628",
+      "name": "Format is Kling?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        220,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "kling-prompt",
+              "name": "kling_prompt",
+              "value": "={{ $json.cli_result && $json.cli_result.content ? $json.cli_result.content : '' }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "0bbdf659-2fe0-4d5c-8d85-c6c2f0c5ef17",
+      "name": "Extract Kling Prompt",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        460,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "comfyui-configured",
+              "leftValue": "={{ $json.comfyui_url }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "5ebf72d4-2cb7-45e0-a04f-6893fd34e751",
+      "name": "ComfyUI Configured?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        700,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.comfyui_url || 'http://127.0.0.1:8188/prompt' }}",
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ prompt: { note: 'Replace this placeholder payload with your exported ComfyUI graph.', kling_prompt: $json.kling_prompt, scenario_id: ($json.cli_result && $json.cli_result.metadata && $json.cli_result.metadata.scenario_id) ? $json.cli_result.metadata.scenario_id : 'unknown' } }) }}"
+      },
+      "id": "290ac7ca-c3f7-42b7-9a8f-6ddc7f18dc77",
+      "name": "Send to ComfyUI",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        940,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.telegram_chat_id }}",
+        "text": "={{ 'Kling prompt submitted to ComfyUI.\\n\\nScenario ID: ' + (($node[\"Parse CLI Envelope\"].json.cli_result && $node[\"Parse CLI Envelope\"].json.cli_result.metadata && $node[\"Parse CLI Envelope\"].json.cli_result.metadata.scenario_id) ? $node[\"Parse CLI Envelope\"].json.cli_result.metadata.scenario_id : 'n/a') + '\\nEndpoint: ' + ($node[\"Parse CLI Envelope\"].json.comfyui_url || 'http://127.0.0.1:8188/prompt') + '\\n\\nReplace the placeholder HTTP body in \"Send to ComfyUI\" with your exported graph for real image generation.' }}"
+      },
+      "id": "99bc4a5e-fd5c-4476-a2d8-3be8e9c89a42",
+      "name": "Telegram Result (Kling + ComfyUI)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.telegram_chat_id }}",
+        "text": "={{ 'Kling prompt ready.\\n\\n' + ($json.kling_prompt || '') }}"
+      },
+      "id": "f3dc3490-0050-4ba5-a1cb-5ef9d6dca13e",
+      "name": "Telegram Result (Kling Prompt)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        940,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $json.telegram_chat_id }}",
+        "text": "={{ $json.cli_result && $json.cli_result.fatal_error ? 'Shorts-engine n8n workflow failed.\\n\\n' + $json.cli_result.fatal_error + ($json.cli_result.hint ? '\\nHint: ' + $json.cli_result.hint : '') : 'Shorts-engine result is ready.\\n\\n[' + (($json.cli_result && $json.cli_result.format) ? $json.cli_result.format : 'unknown') + '] ' + (($json.cli_result && $json.cli_result.title) ? $json.cli_result.title : 'Untitled') + '\\n\\n' + (($json.cli_result && $json.cli_result.content) ? $json.cli_result.content : ($json.engine_stdout || 'No content returned.')) }}"
+      },
+      "id": "560b2ee3-7cee-4647-8132-e6a7a8c4bf20",
+      "name": "Telegram Result (Standard)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        460,
+        380
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "Execute Shorts Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Shorts Engine": {
+      "main": [
+        [
+          {
+            "node": "Parse CLI Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse CLI Envelope": {
+      "main": [
+        [
+          {
+            "node": "Format is Kling?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format is Kling?": {
+      "main": [
+        [
+          {
+            "node": "Extract Kling Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Result (Standard)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Kling Prompt": {
+      "main": [
+        [
+          {
+            "node": "ComfyUI Configured?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ComfyUI Configured?": {
+      "main": [
+        [
+          {
+            "node": "Send to ComfyUI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram Result (Kling Prompt)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to ComfyUI": {
+      "main": [
+        [
+          {
+            "node": "Telegram Result (Kling + ComfyUI)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

@@ -1,0 +1,152 @@
+[
+  {
+    "id": "haruki_murakami_books",
+    "title": { "ko": "Murakami Haruki", "en": "Haruki Murakami" },
+    "category": "author",
+    "genre": ["literary", "surreal", "introspective"],
+    "style_vector": {
+      "camera": { "scale": 0.46, "movement_energy": 0.18, "closeup_ratio": 0.71, "primary_movements": ["still_frame", "night_walk_track", "dream_cut"], "signature": "loneliness_with_portals" },
+      "editing": { "pace": 0.21, "cut_rhythm": "drifting_repetition", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.43, "saturation": 0.28, "palette": ["night_blue", "vinyl_black", "soft_neon"], "mood": "dreamlike_isolation" },
+      "audio": { "music_style": "late_night_jazz", "music_intensity": 0.24, "silence_usage": 0.81, "sfx_style": "subtle_surrealism" },
+      "narrative": { "structure": "drift_into_surreal", "emotion_arc": "calm_to_dislocation", "pacing": "hypnotic_drift", "theme_keywords": ["loneliness", "memory", "surrealism"] },
+      "hook": { "type": "unsettling_normal", "first_3sec": "ordinary_moment_with_slippage", "retention": "quiet_mystery" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.16, "wes_anderson": 0.08, "christopher_nolan": 0.1 }, "writers": { "haruki_murakami": 0.95, "charlie_kaufman": 0.38, "paulo_coelho": 0.18 } }
+  },
+  {
+    "id": "paulo_coelho_books",
+    "title": { "ko": "Paulo Coelho", "en": "Paulo Coelho" },
+    "category": "author",
+    "genre": ["parable", "spiritual", "quest"],
+    "style_vector": {
+      "camera": { "scale": 0.62, "movement_energy": 0.25, "closeup_ratio": 0.46, "primary_movements": ["symbolic_wide", "meditative_push", "journey_track"], "signature": "parable_in_motion" },
+      "editing": { "pace": 0.28, "cut_rhythm": "meditative_progression", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.72, "saturation": 0.49, "palette": ["gold", "sand", "midnight_teal"], "mood": "spiritual_wonder" },
+      "audio": { "music_style": "acoustic_quest", "music_intensity": 0.41, "silence_usage": 0.61, "sfx_style": "symbolic_naturalism" },
+      "narrative": { "structure": "quest_parable", "emotion_arc": "uncertainty_to_clarity", "pacing": "measured_revelation", "theme_keywords": ["destiny", "faith", "search"] },
+      "hook": { "type": "mystery_question", "first_3sec": "parable_or_sign", "retention": "spiritual_resolution" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.16, "denis_villeneuve": 0.12, "wes_anderson": 0.08 }, "writers": { "paulo_coelho": 0.96, "haruki_murakami": 0.24, "noh_hee_kyung": 0.2 } }
+  },
+  {
+    "id": "george_orwell_books",
+    "title": { "ko": "George Orwell", "en": "George Orwell" },
+    "category": "author",
+    "genre": ["political", "satire", "dystopia"],
+    "style_vector": {
+      "camera": { "scale": 0.56, "movement_energy": 0.29, "closeup_ratio": 0.52, "primary_movements": ["measured_track", "institutional_wide", "suspicion_closeup"], "signature": "systems_pressing_on_people" },
+      "editing": { "pace": 0.34, "cut_rhythm": "controlled_alarm", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.31, "saturation": 0.19, "palette": ["concrete_gray", "government_green", "paper_white"], "mood": "cold_warning" },
+      "audio": { "music_style": "grim_minimal", "music_intensity": 0.35, "silence_usage": 0.7, "sfx_style": "institutional_hum" },
+      "narrative": { "structure": "system_vs_self", "emotion_arc": "obedience_to_dread", "pacing": "controlled_pressure", "theme_keywords": ["power", "truth", "control"] },
+      "hook": { "type": "mystery_question", "first_3sec": "claim_that_reframes_reality", "retention": "ideological_pressure" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.26, "christopher_nolan": 0.18, "denis_villeneuve": 0.12 }, "writers": { "aaron_sorkin": 0.2, "agatha_christie": 0.12, "charlie_kaufman": 0.16 } }
+  },
+  {
+    "id": "toni_morrison_books",
+    "title": { "ko": "Toni Morrison", "en": "Toni Morrison" },
+    "category": "author",
+    "genre": ["literary", "memory", "history"],
+    "style_vector": {
+      "camera": { "scale": 0.44, "movement_energy": 0.17, "closeup_ratio": 0.78, "primary_movements": ["lingering_closeup", "memory_reframe", "gentle_push"], "signature": "history_inside_intimacy" },
+      "editing": { "pace": 0.19, "cut_rhythm": "haunted_reflection", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.57, "saturation": 0.34, "palette": ["earth_brown", "deep_blue", "candle_gold"], "mood": "haunted_tenderness" },
+      "audio": { "music_style": "spiritual_minimal", "music_intensity": 0.29, "silence_usage": 0.79, "sfx_style": "memory_texture" },
+      "narrative": { "structure": "memory_excavation", "emotion_arc": "burden_to_reckoning", "pacing": "slow_uncovering", "theme_keywords": ["memory", "history", "healing"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "simple_line_with_depth", "retention": "moral_weight" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.08, "park_chan_wook": 0.12, "bong_joon_ho": 0.1 }, "writers": { "noh_hee_kyung": 0.3, "charlie_kaufman": 0.22, "paulo_coelho": 0.16 } }
+  },
+  {
+    "id": "han_kang_books",
+    "title": { "ko": "Han Kang", "en": "Han Kang" },
+    "category": "author",
+    "genre": ["literary", "body", "psychological"],
+    "style_vector": {
+      "camera": { "scale": 0.42, "movement_energy": 0.16, "closeup_ratio": 0.82, "primary_movements": ["still_frame", "lingering_closeup", "clinical_pan"], "signature": "quiet_intensity" },
+      "editing": { "pace": 0.17, "cut_rhythm": "sustained_discomfort", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.36, "saturation": 0.22, "palette": ["white", "pale_green", "ash_gray"], "mood": "cold_vulnerability" },
+      "audio": { "music_style": "sparse_ambient", "music_intensity": 0.2, "silence_usage": 0.86, "sfx_style": "body_detail" },
+      "narrative": { "structure": "psychological_fracture", "emotion_arc": "suppression_to_break", "pacing": "slow_pressure", "theme_keywords": ["body", "violence", "silence"] },
+      "hook": { "type": "unsettling_normal", "first_3sec": "quiet_image_with_wrongness", "retention": "psychological_tension" }
+    },
+    "maps_to_presets": { "directors": { "park_chan_wook": 0.28, "denis_villeneuve": 0.12, "bong_joon_ho": 0.08 }, "writers": { "charlie_kaufman": 0.24, "noh_hee_kyung": 0.18, "haruki_murakami": 0.22 } }
+  },
+  {
+    "id": "agatha_christie_books",
+    "title": { "ko": "Agatha Christie", "en": "Agatha Christie" },
+    "category": "author",
+    "genre": ["mystery", "detective", "plot"],
+    "style_vector": {
+      "camera": { "scale": 0.43, "movement_energy": 0.31, "closeup_ratio": 0.61, "primary_movements": ["clue_insert", "measured_track", "suspicion_closeup"], "signature": "clue_first_clarity" },
+      "editing": { "pace": 0.45, "cut_rhythm": "clue_reveal", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.54, "saturation": 0.38, "palette": ["mahogany", "cream", "forest_green"], "mood": "elegant_suspense" },
+      "audio": { "music_style": "chamber_tension", "music_intensity": 0.39, "silence_usage": 0.54, "sfx_style": "precise_clues" },
+      "narrative": { "structure": "closed_circle_mystery", "emotion_arc": "certainty_to_doubt_to_reveal", "pacing": "clue_stack_and_reveal", "theme_keywords": ["mystery", "deception", "reveal"] },
+      "hook": { "type": "mystery_question", "first_3sec": "strange_fact_or_missing_piece", "retention": "clue_chain" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.12, "bong_joon_ho": 0.18, "park_chan_wook": 0.14 }, "writers": { "agatha_christie": 0.98, "aaron_sorkin": 0.18, "charlie_kaufman": 0.1 } }
+  },
+  {
+    "id": "gabriel_garcia_marquez_books",
+    "title": { "ko": "Gabriel Garcia Marquez", "en": "Gabriel Garcia Marquez" },
+    "category": "author",
+    "genre": ["magical_realism", "literary", "family"],
+    "style_vector": {
+      "camera": { "scale": 0.61, "movement_energy": 0.23, "closeup_ratio": 0.53, "primary_movements": ["mythic_wide", "gentle_track", "memory_push"], "signature": "history_as_myth" },
+      "editing": { "pace": 0.24, "cut_rhythm": "mythic_flow", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.74, "saturation": 0.52, "palette": ["tropical_green", "sun_gold", "earth_red"], "mood": "lush_fatalism" },
+      "audio": { "music_style": "folk_mythic", "music_intensity": 0.35, "silence_usage": 0.68, "sfx_style": "natural_magic" },
+      "narrative": { "structure": "family_saga_cycle", "emotion_arc": "wonder_to_burden", "pacing": "measured_revelation", "theme_keywords": ["history", "family", "myth"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "mythic_image_in_daily_life", "retention": "generational_curiosity" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.14, "denis_villeneuve": 0.08, "bong_joon_ho": 0.08 }, "writers": { "paulo_coelho": 0.34, "haruki_murakami": 0.26, "noh_hee_kyung": 0.16 } }
+  },
+  {
+    "id": "aaron_sorkin_scripts",
+    "title": { "ko": "Aaron Sorkin", "en": "Aaron Sorkin" },
+    "category": "author",
+    "genre": ["dialogue", "political", "drama"],
+    "style_vector": {
+      "camera": { "scale": 0.45, "movement_energy": 0.56, "closeup_ratio": 0.63, "primary_movements": ["walk_and_talk", "medium_track", "fast_push"], "signature": "argument_as_momentum" },
+      "editing": { "pace": 0.76, "cut_rhythm": "verbal_ping_pong", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.49, "saturation": 0.41, "palette": ["navy", "white", "office_gray"], "mood": "urgent_confidence" },
+      "audio": { "music_style": "measured_drive", "music_intensity": 0.48, "silence_usage": 0.24, "sfx_style": "dialogue_forward" },
+      "narrative": { "structure": "debate_escalation", "emotion_arc": "pressure_to_breakthrough", "pacing": "accelerating_argument", "theme_keywords": ["power", "wit", "ambition"] },
+      "hook": { "type": "mystery_question", "first_3sec": "sharp_claim_or_argument", "retention": "verbal_escalation" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.14, "edgar_wright": 0.12, "bong_joon_ho": 0.12 }, "writers": { "aaron_sorkin": 0.99, "agatha_christie": 0.14, "charlie_kaufman": 0.08 } }
+  },
+  {
+    "id": "charlie_kaufman_scripts",
+    "title": { "ko": "Charlie Kaufman", "en": "Charlie Kaufman" },
+    "category": "author",
+    "genre": ["surreal", "meta", "psychological"],
+    "style_vector": {
+      "camera": { "scale": 0.39, "movement_energy": 0.22, "closeup_ratio": 0.75, "primary_movements": ["hesitant_push", "lingering_closeup", "identity_mirror"], "signature": "inner_life_as_space" },
+      "editing": { "pace": 0.29, "cut_rhythm": "self_reflective", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.44, "saturation": 0.32, "palette": ["paper_gray", "faded_blue", "skin_tone"], "mood": "fragile_introspection" },
+      "audio": { "music_style": "subtle_unease", "music_intensity": 0.31, "silence_usage": 0.77, "sfx_style": "psychological_detail" },
+      "narrative": { "structure": "identity_loop", "emotion_arc": "self_doubt_to_reckoning", "pacing": "ruminative_spiral", "theme_keywords": ["identity", "memory", "regret"] },
+      "hook": { "type": "unsettling_normal", "first_3sec": "ordinary_line_that_bends_reality", "retention": "existential_question" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.18, "denis_villeneuve": 0.14, "wes_anderson": 0.06 }, "writers": { "charlie_kaufman": 0.99, "haruki_murakami": 0.34, "noh_hee_kyung": 0.1 } }
+  },
+  {
+    "id": "noh_hee_kyung_drama",
+    "title": { "ko": "Noh Hee Kyung", "en": "Noh Hee-kyung" },
+    "category": "author",
+    "genre": ["drama", "slice_of_life", "healing"],
+    "style_vector": {
+      "camera": { "scale": 0.41, "movement_energy": 0.24, "closeup_ratio": 0.82, "primary_movements": ["gentle_closeup", "patient_two_shot", "small_pan"], "signature": "compassionate_observation" },
+      "editing": { "pace": 0.26, "cut_rhythm": "emotional_breathing", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.63, "saturation": 0.37, "palette": ["soft_brown", "window_light", "rainy_blue"], "mood": "warm_honesty" },
+      "audio": { "music_style": "piano_restraint", "music_intensity": 0.28, "silence_usage": 0.79, "sfx_style": "intimate_room_tone" },
+      "narrative": { "structure": "relational_slice_of_life", "emotion_arc": "distance_to_understanding", "pacing": "quiet_accumulation", "theme_keywords": ["healing", "family", "forgiveness"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "simple_line_with_emotional_weight", "retention": "earned_empathy" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.1, "wes_anderson": 0.06, "denis_villeneuve": 0.04 }, "writers": { "noh_hee_kyung": 0.99, "paulo_coelho": 0.18, "haruki_murakami": 0.16 } }
+  }
+]

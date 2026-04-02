@@ -1,16 +1,19 @@
 {
   "name": "shorts-engine",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "A simulate-first TypeScript CLI for validating shorts engine requests, routing cost decisions, and simulating recovery behavior.",
+  "description": "A taste-first TypeScript CLI that turns personal style into short-form video scenarios, prompts, formatters, and quality loops.",
   "type": "module",
   "bin": {
     "engine": "./dist/src/cli/index.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/copy-taste-db-assets.mjs",
     "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
     "run": "npm run build && node dist/src/cli/index.js"
+  },
+  "docs": {
+    "n8n": "./n8n/README-n8n.md"
   },
   "engines": {
     "node": ">=24"

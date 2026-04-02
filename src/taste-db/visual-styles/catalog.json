@@ -1,0 +1,152 @@
+[
+  {
+    "id": "ghibli_dreamscape",
+    "title": { "ko": "Jibeulli Dreamscape", "en": "Ghibli Dreamscape" },
+    "category": "visual_style",
+    "genre": ["animation", "fantasy", "wholesome"],
+    "style_vector": {
+      "camera": { "scale": 0.72, "movement_energy": 0.28, "closeup_ratio": 0.42, "primary_movements": ["floating_pan", "storybook_push", "gentle_track"], "signature": "wonder_in_small_details" },
+      "editing": { "pace": 0.31, "cut_rhythm": "dream_logic", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.66, "saturation": 0.74, "palette": ["tea_green", "sunset_orange", "sky_blue"], "mood": "gentle_wonder" },
+      "audio": { "music_style": "lyrical_orchestral", "music_intensity": 0.52, "silence_usage": 0.5, "sfx_style": "magical_naturalism" },
+      "narrative": { "structure": "rite_of_passage", "emotion_arc": "fear_to_grace", "pacing": "measured_discovery", "theme_keywords": ["growth", "kindness", "wonder"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "magical_world_reveal", "retention": "curiosity_chain" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.38, "denis_villeneuve": 0.12, "christopher_nolan": 0.16 }, "writers": { "paulo_coelho": 0.42, "haruki_murakami": 0.34, "noh_hee_kyung": 0.24 } }
+  },
+  {
+    "id": "lofi_chill",
+    "title": { "ko": "Lo Fi Chill", "en": "Lo-fi Chill" },
+    "category": "visual_style",
+    "genre": ["lifestyle", "ambient", "cozy"],
+    "style_vector": {
+      "camera": { "scale": 0.34, "movement_energy": 0.14, "closeup_ratio": 0.67, "primary_movements": ["lockoff", "soft_pan", "window_push"], "signature": "quiet_daily_comfort" },
+      "editing": { "pace": 0.17, "cut_rhythm": "breathing_room", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.58, "saturation": 0.32, "palette": ["dusty_brown", "soft_blue", "cream"], "mood": "cozy_rest" },
+      "audio": { "music_style": "lofi_beats", "music_intensity": 0.24, "silence_usage": 0.71, "sfx_style": "room_tone" },
+      "narrative": { "structure": "slice_of_life", "emotion_arc": "stress_to_release", "pacing": "gentle_accumulation", "theme_keywords": ["cozy", "focus", "calm"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "quiet_detail_with_texture", "retention": "comfort_loop" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.18, "denis_villeneuve": 0.08, "bong_joon_ho": 0.08 }, "writers": { "noh_hee_kyung": 0.46, "haruki_murakami": 0.34, "paulo_coelho": 0.2 } }
+  },
+  {
+    "id": "neon_noir",
+    "title": { "ko": "Neon Noir", "en": "Neon Noir" },
+    "category": "visual_style",
+    "genre": ["neo_noir", "cyberpunk", "moody"],
+    "style_vector": {
+      "camera": { "scale": 0.82, "movement_energy": 0.36, "closeup_ratio": 0.38, "primary_movements": ["silhouette_track", "slow_push", "rain_pan"], "signature": "lonely_city_spectacle" },
+      "editing": { "pace": 0.34, "cut_rhythm": "patient_tension", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.22, "saturation": 0.78, "palette": ["neon_cyan", "magenta", "ink_black"], "mood": "cool_dread" },
+      "audio": { "music_style": "synthetic_ambient", "music_intensity": 0.64, "silence_usage": 0.61, "sfx_style": "wet_city_texture" },
+      "narrative": { "structure": "investigation_revelation", "emotion_arc": "distance_to_obsession", "pacing": "slow_burn", "theme_keywords": ["identity", "city", "alienation"] },
+      "hook": { "type": "sensory_immersion", "first_3sec": "rainy_neon_texture", "retention": "mystery_pressure" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.68, "christopher_nolan": 0.18, "park_chan_wook": 0.14 }, "writers": { "haruki_murakami": 0.3, "charlie_kaufman": 0.28, "agatha_christie": 0.12 } }
+  },
+  {
+    "id": "analog_grain",
+    "title": { "ko": "Analog Grain", "en": "Analog Grain" },
+    "category": "visual_style",
+    "genre": ["editorial", "nostalgic", "documentary"],
+    "style_vector": {
+      "camera": { "scale": 0.44, "movement_energy": 0.23, "closeup_ratio": 0.59, "primary_movements": ["observational_handheld", "slow_reframe", "grainy_closeup"], "signature": "memory_as_texture" },
+      "editing": { "pace": 0.24, "cut_rhythm": "reflective", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.57, "saturation": 0.24, "palette": ["faded_brown", "dusty_green", "paper_white"], "mood": "nostalgic_honesty" },
+      "audio": { "music_style": "warm_acoustic", "music_intensity": 0.28, "silence_usage": 0.66, "sfx_style": "tape_hiss_detail" },
+      "narrative": { "structure": "memory_fragment", "emotion_arc": "distance_to_recognition", "pacing": "slow_drift", "theme_keywords": ["memory", "nostalgia", "texture"] },
+      "hook": { "type": "unsettling_normal", "first_3sec": "familiar_image_with_wear", "retention": "memory_pull" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.14, "wes_anderson": 0.12, "denis_villeneuve": 0.08 }, "writers": { "haruki_murakami": 0.38, "noh_hee_kyung": 0.26, "paulo_coelho": 0.18 } }
+  },
+  {
+    "id": "luxury_editorial",
+    "title": { "ko": "Luxury Editorial", "en": "Luxury Editorial" },
+    "category": "visual_style",
+    "genre": ["fashion", "editorial", "premium"],
+    "style_vector": {
+      "camera": { "scale": 0.58, "movement_energy": 0.31, "closeup_ratio": 0.52, "primary_movements": ["symmetry_push", "detail_macro", "slow_glide"], "signature": "precision_and_polish" },
+      "editing": { "pace": 0.36, "cut_rhythm": "measured_precision", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.61, "saturation": 0.61, "palette": ["champagne", "black", "ivory"], "mood": "controlled_desire" },
+      "audio": { "music_style": "minimal_house", "music_intensity": 0.51, "silence_usage": 0.31, "sfx_style": "clean_detail" },
+      "narrative": { "structure": "aspirational_reveal", "emotion_arc": "curiosity_to_desire", "pacing": "measured_build", "theme_keywords": ["luxury", "precision", "status"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "pristine_detail_hit", "retention": "aspirational_pull" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.42, "park_chan_wook": 0.22, "denis_villeneuve": 0.16 }, "writers": { "aaron_sorkin": 0.18, "agatha_christie": 0.12, "paulo_coelho": 0.12 } }
+  },
+  {
+    "id": "handheld_documentary",
+    "title": { "ko": "Handheld Documentary", "en": "Handheld Documentary" },
+    "category": "visual_style",
+    "genre": ["documentary", "street", "grounded"],
+    "style_vector": {
+      "camera": { "scale": 0.48, "movement_energy": 0.42, "closeup_ratio": 0.63, "primary_movements": ["observational_handheld", "walk_follow", "small_reframe"], "signature": "truth_in_motion" },
+      "editing": { "pace": 0.43, "cut_rhythm": "observational", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.49, "saturation": 0.29, "palette": ["street_gray", "natural_skin", "soft_green"], "mood": "grounded_urgency" },
+      "audio": { "music_style": "minimal_pulse", "music_intensity": 0.33, "silence_usage": 0.55, "sfx_style": "location_sound" },
+      "narrative": { "structure": "follow_and_reveal", "emotion_arc": "distance_to_understanding", "pacing": "steady_escalation", "theme_keywords": ["truth", "street", "witness"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "drop_into_real_moment", "retention": "human_curiosity" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.28, "denis_villeneuve": 0.1, "wes_anderson": 0.04 }, "writers": { "noh_hee_kyung": 0.34, "aaron_sorkin": 0.16, "agatha_christie": 0.08 } }
+  },
+  {
+    "id": "maximalist_comedy",
+    "title": { "ko": "Maximalist Comedy", "en": "Maximalist Comedy" },
+    "category": "visual_style",
+    "genre": ["comedy", "kinetic", "viral"],
+    "style_vector": {
+      "camera": { "scale": 0.52, "movement_energy": 0.94, "closeup_ratio": 0.56, "primary_movements": ["whip_pan", "snap_zoom", "kinetic_push"], "signature": "payoff_every_few_seconds" },
+      "editing": { "pace": 0.95, "cut_rhythm": "percussive_sync", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.62, "saturation": 0.87, "palette": ["electric_red", "cream", "ink_black"], "mood": "playful_adrenaline" },
+      "audio": { "music_style": "needle_drop_drive", "music_intensity": 0.86, "silence_usage": 0.12, "sfx_style": "comic_exaggeration" },
+      "narrative": { "structure": "escalating_set_piece", "emotion_arc": "awkwardness_to_triumph", "pacing": "rapid_escalation", "theme_keywords": ["comedy", "speed", "payoff"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "instant_visual_hit", "retention": "constant_payoff" }
+    },
+    "maps_to_presets": { "directors": { "edgar_wright": 0.9, "wes_anderson": 0.15, "christopher_nolan": 0.06 }, "writers": { "aaron_sorkin": 0.2, "charlie_kaufman": 0.18, "agatha_christie": 0.08 } }
+  },
+  {
+    "id": "minimalist_zen",
+    "title": { "ko": "Minimalist Zen", "en": "Minimalist Zen" },
+    "category": "visual_style",
+    "genre": ["minimal", "calm", "design"],
+    "style_vector": {
+      "camera": { "scale": 0.36, "movement_energy": 0.09, "closeup_ratio": 0.61, "primary_movements": ["lockoff", "micro_push", "detail_hold"], "signature": "stillness_as_focus" },
+      "editing": { "pace": 0.12, "cut_rhythm": "meditative_breathing", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.54, "saturation": 0.15, "palette": ["paper_white", "stone_gray", "moss_green"], "mood": "clarity_and_rest" },
+      "audio": { "music_style": "soft_ambient", "music_intensity": 0.16, "silence_usage": 0.88, "sfx_style": "micro_detail" },
+      "narrative": { "structure": "single_idea_distillation", "emotion_arc": "noise_to_clarity", "pacing": "stillness", "theme_keywords": ["clarity", "discipline", "calm"] },
+      "hook": { "type": "unsettling_normal", "first_3sec": "unexpected_stillness", "retention": "calming_contrast" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.16, "denis_villeneuve": 0.14, "christopher_nolan": 0.04 }, "writers": { "paulo_coelho": 0.24, "noh_hee_kyung": 0.22, "haruki_murakami": 0.22 } }
+  },
+  {
+    "id": "cozy_lifestyle_vlog",
+    "title": { "ko": "Cozy Lifestyle Vlog", "en": "Cozy Lifestyle Vlog" },
+    "category": "visual_style",
+    "genre": ["lifestyle", "vlog", "cozy"],
+    "style_vector": {
+      "camera": { "scale": 0.29, "movement_energy": 0.2, "closeup_ratio": 0.69, "primary_movements": ["handheld_closeup", "soft_pan", "table_detail"], "signature": "warm_daily_ritual" },
+      "editing": { "pace": 0.22, "cut_rhythm": "gentle_progression", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.71, "saturation": 0.41, "palette": ["beige", "latte_brown", "window_gold"], "mood": "warm_comfort" },
+      "audio": { "music_style": "soft_acoustic", "music_intensity": 0.22, "silence_usage": 0.63, "sfx_style": "domestic_detail" },
+      "narrative": { "structure": "day_in_life", "emotion_arc": "stress_to_comfort", "pacing": "gentle_accumulation", "theme_keywords": ["cozy", "routine", "comfort"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "comforting_detail", "retention": "ritual_satisfaction" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.14, "bong_joon_ho": 0.06, "denis_villeneuve": 0.04 }, "writers": { "noh_hee_kyung": 0.44, "paulo_coelho": 0.16, "haruki_murakami": 0.18 } }
+  },
+  {
+    "id": "kinetic_music_video",
+    "title": { "ko": "Kinetic Music Video", "en": "Kinetic Music Video" },
+    "category": "visual_style",
+    "genre": ["music", "kinetic", "performance"],
+    "style_vector": {
+      "camera": { "scale": 0.63, "movement_energy": 0.96, "closeup_ratio": 0.49, "primary_movements": ["dance_track", "snap_zoom", "whip_pan"], "signature": "rhythm_visible_on_screen" },
+      "editing": { "pace": 0.97, "cut_rhythm": "beat_locked", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.59, "saturation": 0.91, "palette": ["acid_yellow", "electric_cyan", "black"], "mood": "euphoric_drive" },
+      "audio": { "music_style": "high_energy_pop", "music_intensity": 0.95, "silence_usage": 0.05, "sfx_style": "beat_impacts" },
+      "narrative": { "structure": "performance_climax", "emotion_arc": "anticipation_to_release", "pacing": "constant_escalation", "theme_keywords": ["rhythm", "performance", "energy"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "beat_synced_visual_hit", "retention": "constant_momentum" }
+    },
+    "maps_to_presets": { "directors": { "edgar_wright": 0.82, "park_chan_wook": 0.1, "christopher_nolan": 0.06 }, "writers": { "aaron_sorkin": 0.12, "charlie_kaufman": 0.08, "paulo_coelho": 0.08 } }
+  }
+]

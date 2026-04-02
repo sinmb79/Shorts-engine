@@ -88,6 +88,22 @@ export interface NormalizedRequest {
   derived: NormalizedRequestDerived;
 }
 
+export interface StyleResolution {
+  schema_version: string;
+  source: "request_only" | "taste_profile";
+  taste_profile_id: string | null;
+  resolved_style: EngineStyle;
+  director_matches: Record<string, number>;
+  writer_matches: Record<string, number>;
+  narrative_keywords: string[];
+  color_palette: string[];
+  concept_keywords: string[];
+  mood: string | null;
+  camera_signature: string | null;
+  music_style: string | null;
+  notes: string[];
+}
+
 export type PlatformWarningCode =
   | "duration_raised_to_platform_min"
   | "duration_clamped_to_platform_max";
@@ -263,6 +279,85 @@ export interface PromptResultParams {
   duration_sec: number;
 }
 
+export type ScenarioSceneRole = "hook" | "development" | "twist" | "closer";
+
+export interface ScenarioHookDecision {
+  hook_type: string;
+  opening_device: string;
+  reason_codes: string[];
+}
+
+export interface ScenarioScene {
+  scene_id: string;
+  role: ScenarioSceneRole;
+  block_id: string;
+  duration_sec: number;
+  scenario_text_ko: string;
+  scenario_text_en: string;
+  camera_cues: string[];
+  audio_cues: string[];
+  caption_text: string;
+  ai_prompt_fragment: string;
+  tags: string[];
+}
+
+export interface ScenarioPlan {
+  schema_version: string;
+  scenario_id: string;
+  source: "request_only" | "taste_profile";
+  director_anchor: string | null;
+  writer_anchor: string | null;
+  structure: string;
+  hook_decision: ScenarioHookDecision;
+  summary: string;
+  blocks_used: string[];
+  scenes: ScenarioScene[];
+  warnings: string[];
+}
+
+export type QualityDimensionId =
+  | "hook_strength"
+  | "rhythm_match"
+  | "style_fidelity"
+  | "platform_fit"
+  | "narrative_arc"
+  | "prompt_quality";
+
+export interface QualityDimensionScore {
+  dimension: QualityDimensionId;
+  label: string;
+  weight: number;
+  score: number;
+  pass: boolean;
+  reason_codes: string[];
+}
+
+export interface QualityRetryPlan {
+  recommended: boolean;
+  max_attempts: number;
+  focus_dimensions: QualityDimensionId[];
+}
+
+export interface QualityGateResult {
+  schema_version: string;
+  overall_score: number;
+  threshold: number;
+  pass: boolean;
+  dimensions: QualityDimensionScore[];
+  warnings: string[];
+  retry_plan: QualityRetryPlan;
+}
+
+export type LlmProviderName = "openai" | "anthropic" | "ollama";
+
+export interface LlmRefinementSummary {
+  enabled: boolean;
+  provider: LlmProviderName | null;
+  status: "refined" | "fallback" | "unavailable" | "error";
+  warnings: string[];
+  refined_quality_score: number | null;
+}
+
 export interface PromptResult {
   schema_version: string;
   engine: string;
@@ -314,6 +409,11 @@ export interface AnalyzeResult {
   request_id: string;
   readiness: AnalyzeReadiness;
   risk_summary: AnalyzeRiskSummary;
+  quality_gate: {
+    overall_score: number;
+    pass: boolean;
+    weakest_dimensions: QualityDimensionId[];
+  };
   warning_count: number;
   recommended_backend: ExecutionBackend;
 }
@@ -323,6 +423,8 @@ export interface RenderPlanSegment {
   duration_sec: number;
   motion: MotionName;
   broll_concept: string;
+  caption_text: string;
+  scene_prompt: string;
 }
 
 export interface RenderPlanAssetManifest {
@@ -441,6 +543,10 @@ export interface EngineRunResult {
   request_id: string;
   validation: ValidationResult;
   normalized_request: NormalizedRequest | null;
+  style_resolution: StyleResolution | null;
+  scenario_plan: ScenarioPlan | null;
+  quality_gate: QualityGateResult | null;
+  llm_refinement: LlmRefinementSummary | null;
   platform_output_spec: PlatformOutputSpec | null;
   novel_shorts_plan: NovelShortsPlan | null;
   motion_plan: MotionPlan | null;

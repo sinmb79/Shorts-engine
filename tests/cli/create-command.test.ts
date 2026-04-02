@@ -46,3 +46,23 @@ test("prints a short human-readable create summary", () => {
     rmSync(tempDir, { recursive: true, force: true });
   }
 });
+
+test("creates a scaffold request file from a template preset", () => {
+  const tempDir = mkdtempSync(path.join(process.cwd(), "tmp-create-template-"));
+  const outputPath = path.join(tempDir, "template-request.json");
+
+  try {
+    const result = runCli(["create", "--template", "recipe-30s", outputPath, "--json"]);
+    const parsed = JSON.parse(result.stdout) as {
+      profile?: string;
+      request?: { intent?: { theme?: string; duration_sec?: number } };
+    };
+
+    assert.equal(result.exitCode, 0);
+    assert.equal(parsed.profile, "recipe-30s");
+    assert.equal(parsed.request?.intent?.theme, "recipe");
+    assert.equal(parsed.request?.intent?.duration_sec, 30);
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true });
+  }
+});

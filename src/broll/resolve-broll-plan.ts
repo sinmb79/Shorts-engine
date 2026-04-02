@@ -7,6 +7,7 @@ import type {
   NormalizedRequest,
   Platform,
   PlatformOutputSpec,
+  StyleResolution,
 } from "../domain/contracts.js";
 import { BROLL_DATASET_VERSION, GENERIC_FALLBACK_CONCEPTS, getSeedConceptMap } from "./seed-concept-map.js";
 
@@ -24,12 +25,14 @@ export function resolveBrollPlan(
   normalizedRequest: NormalizedRequest,
   platformOutputSpec: PlatformOutputSpec,
   motionPlan: MotionPlan,
+  styleResolution?: StyleResolution,
 ): BrollPlan {
   const dataset = getSeedConceptMap();
   const warnings = new Set<string>();
   const tokensBySource = {
     emotion: tokenize(normalizedRequest.base.intent.emotion),
     goal: tokenize(normalizedRequest.base.intent.goal),
+    style: tokenize(styleResolution?.concept_keywords.join(" ") ?? ""),
     theme: tokenize(normalizedRequest.base.intent.theme),
     topic: tokenize(normalizedRequest.base.intent.topic),
   };
@@ -66,7 +69,7 @@ export function resolveBrollPlan(
 
 function selectConceptForSegment(
   dataset: BrollConceptRecord[],
-  tokensBySource: Record<"emotion" | "goal" | "theme" | "topic", string[]>,
+  tokensBySource: Record<"emotion" | "goal" | "style" | "theme" | "topic", string[]>,
   platform: Platform,
   role: MotionSegmentRole,
 ): { fallbackUsed: boolean; segment: BrollPlanSegment } {
@@ -112,7 +115,7 @@ function selectConceptForSegment(
 
 function evaluateConcept(
   concept: BrollConceptRecord,
-  tokensBySource: Record<"emotion" | "goal" | "theme" | "topic", string[]>,
+  tokensBySource: Record<"emotion" | "goal" | "style" | "theme" | "topic", string[]>,
   platform: Platform,
   role: MotionSegmentRole,
 ): EvaluatedConcept {

@@ -10,7 +10,7 @@ import { loadFixture } from "../helpers/load-fixture.js";
 
 test("builds a render manifest aligned to motion and b-roll segments", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const planningContext = resolvePlanningContext(request);
+  const planningContext = await resolvePlanningContext(request);
   const promptResult = buildPromptResult({
     brollPlan: planningContext.broll_plan,
     effectiveRequest: planningContext.effective_request,
@@ -18,8 +18,11 @@ test("builds a render manifest aligned to motion and b-roll segments", async () 
     motionPlan: planningContext.motion_plan,
     novelShortsPlan: planningContext.novel_shorts_plan,
     platformOutputSpec: planningContext.platform_output_spec,
+    qualityGate: planningContext.quality_gate,
     routing: planningContext.routing,
+    scenarioPlan: planningContext.scenario_plan,
     scoring: planningContext.scoring,
+    styleResolution: planningContext.style_resolution,
   });
 
   const renderPlan = buildRenderPlan({
@@ -30,6 +33,7 @@ test("builds a render manifest aligned to motion and b-roll segments", async () 
     promptResult,
     routing: planningContext.routing,
     platformOutputSpec: planningContext.platform_output_spec,
+    scenarioPlan: planningContext.scenario_plan,
   });
 
   assert.equal(renderPlan.schema_version, "0.1");
@@ -38,4 +42,6 @@ test("builds a render manifest aligned to motion and b-roll segments", async () 
   assert.equal(renderPlan.segments[0]?.segment_id, "hook");
   assert.equal(renderPlan.segments[0]?.motion, "zoom_in");
   assert.equal(renderPlan.segments[0]?.broll_concept, "ai");
+  assert.equal(typeof renderPlan.segments[0]?.caption_text, "string");
+  assert.equal(typeof renderPlan.segments[0]?.scene_prompt, "string");
 });

@@ -6,6 +6,7 @@ import type {
   PromptResult,
   RenderPlan,
   RoutingDecision,
+  ScenarioPlan,
 } from "../domain/contracts.js";
 import { createRequestId } from "../shared/request-id.js";
 
@@ -17,6 +18,7 @@ export function buildRenderPlan(input: {
   promptResult: PromptResult;
   routing: RoutingDecision;
   platformOutputSpec: PlatformOutputSpec;
+  scenarioPlan: ScenarioPlan;
 }): RenderPlan {
   const {
     requestId,
@@ -26,7 +28,12 @@ export function buildRenderPlan(input: {
     promptResult,
     routing,
     platformOutputSpec,
+    scenarioPlan,
   } = input;
+
+  const scenarioByRole = new Map(
+    scenarioPlan.scenes.map((scene) => [scene.role, scene] as const),
+  );
 
   return {
     schema_version: "0.1",
@@ -34,6 +41,7 @@ export function buildRenderPlan(input: {
     engine: routing.selected_backend,
     output_filename: buildOutputFilename(effectiveRequest, requestId),
     segments: motionPlan.motion_sequence.map((segment, index) => ({
+      ...resolveScenarioSegmentFields(segment.segment_id, scenarioByRole),
       segment_id: segment.segment_id,
       duration_sec: segment.duration_sec,
       motion: segment.motion,
@@ -47,6 +55,7 @@ export function buildRenderPlan(input: {
         "primary_scene_prompt",
         "hook_broll_placeholder",
         "body_broll_placeholder",
+        "scenario_caption_track",
       ],
     },
     qa_checklist: [
@@ -55,6 +64,26 @@ export function buildRenderPlan(input: {
       "hook_alignment_verified",
     ],
     warnings: [...promptResult.warnings],
+  };
+}
+
+function resolveScenarioSegmentFields(
+  segmentId: RenderPlan["segments"][number]["segment_id"],
+  scenarioByRole: Map<string, ScenarioPlan["scenes"][number]>,
+): Pick<RenderPlan["segments"][number], "caption_text" | "scene_prompt"> {
+  const role =
+    segmentId === "hook"
+      ? "hook"
+      : segmentId === "body_1"
+        ? "development"
+        : segmentId === "body_2"
+          ? "twist"
+          : "closer";
+  const scene = scenarioByRole.get(role);
+
+  return {
+    caption_text: scene?.caption_text ?? "",
+    scene_prompt: scene?.ai_prompt_fragment ?? "",
   };
 }
 

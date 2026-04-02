@@ -23,7 +23,7 @@ function makeMockUploadAdapter(name: string): UploadAdapter {
 
 test("executeUpload returns dry_run result", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = await resolvePlanningContext(request);
   const mockAdapter = makeMockUploadAdapter("mock");
 
   const result = await executeUpload(context, "test.mp4", {
@@ -38,7 +38,7 @@ test("executeUpload returns dry_run result", async () => {
 
 test("executeUpload sets platform from context", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = await resolvePlanningContext(request);
   const mockAdapter = makeMockUploadAdapter("mock");
 
   const result = await executeUpload(context, "test.mp4", {
@@ -55,7 +55,7 @@ test("executeUpload sets platform from context", async () => {
 
 test("buildUploadRequest returns valid UploadRequest", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = await resolvePlanningContext(request);
 
   const uploadRequest = buildUploadRequest(context, "/tmp/test.mp4");
 

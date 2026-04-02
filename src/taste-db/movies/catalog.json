@@ -1,0 +1,322 @@
+[
+  {
+    "id": "interstellar",
+    "title": { "ko": "Inteoseutella", "en": "Interstellar" },
+    "year": 2014,
+    "category": "movie",
+    "genre": ["sci_fi", "drama", "adventure"],
+    "style_vector": {
+      "camera": { "scale": 0.95, "movement_energy": 0.52, "closeup_ratio": 0.42, "primary_movements": ["imax_wide", "slow_dolly", "steady_track"], "signature": "epic_landscape_to_human_face" },
+      "editing": { "pace": 0.42, "cut_rhythm": "narrative_driven", "cross_cutting": true, "time_manipulation": true },
+      "color": { "temperature": 0.58, "saturation": 0.48, "palette": ["golden_hour", "deep_space_blue", "earth_brown"], "mood": "awe_and_intimacy" },
+      "audio": { "music_style": "orchestral_organ", "music_intensity": 0.84, "silence_usage": 0.62, "sfx_style": "immersive_realism" },
+      "narrative": { "structure": "hero_journey_with_sacrifice", "emotion_arc": "hope_to_desperation_to_transcendence", "pacing": "slow_build_explosive_climax", "theme_keywords": ["love", "time", "sacrifice", "wonder"] },
+      "hook": { "type": "mystery_question", "first_3sec": "vast_visual_plus_question", "retention": "escalating_stakes" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.95, "denis_villeneuve": 0.5, "wes_anderson": 0.1 }, "writers": { "paulo_coelho": 0.45, "charlie_kaufman": 0.3, "haruki_murakami": 0.25 } }
+  },
+  {
+    "id": "parasite",
+    "title": { "ko": "Gisaengchung", "en": "Parasite" },
+    "year": 2019,
+    "category": "movie",
+    "genre": ["thriller", "drama", "satire"],
+    "style_vector": {
+      "camera": { "scale": 0.66, "movement_energy": 0.58, "closeup_ratio": 0.61, "primary_movements": ["class_shift_track", "slow_reveal", "handheld_follow"], "signature": "architecture_as_status_map" },
+      "editing": { "pace": 0.61, "cut_rhythm": "tonal_pivot", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.38, "saturation": 0.44, "palette": ["concrete_gray", "grass_green", "warm_interior"], "mood": "ironic_tension" },
+      "audio": { "music_style": "minimal_anxiety", "music_intensity": 0.66, "silence_usage": 0.41, "sfx_style": "environmental_detail" },
+      "narrative": { "structure": "class_collision", "emotion_arc": "humor_to_horror", "pacing": "steady_escalation", "theme_keywords": ["class", "deception", "survival", "status"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "ordinary_scene_with_fracture", "retention": "tonal_reversal" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.96, "park_chan_wook": 0.35, "denis_villeneuve": 0.15 }, "writers": { "agatha_christie": 0.4, "aaron_sorkin": 0.2, "noh_hee_kyung": 0.4 } }
+  },
+  {
+    "id": "spirited_away",
+    "title": { "ko": "Sen to Chihiro", "en": "Spirited Away" },
+    "year": 2001,
+    "category": "movie",
+    "genre": ["animation", "fantasy", "adventure"],
+    "style_vector": {
+      "camera": { "scale": 0.76, "movement_energy": 0.33, "closeup_ratio": 0.46, "primary_movements": ["storybook_pan", "gentle_push", "floating_track"], "signature": "wonder_through_small_details" },
+      "editing": { "pace": 0.36, "cut_rhythm": "dream_logic", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.63, "saturation": 0.72, "palette": ["tea_green", "sunset_orange", "spirit_blue"], "mood": "curious_wonder" },
+      "audio": { "music_style": "lyrical_orchestral", "music_intensity": 0.58, "silence_usage": 0.47, "sfx_style": "magical_naturalism" },
+      "narrative": { "structure": "rite_of_passage", "emotion_arc": "fear_to_courage_to_grace", "pacing": "measured_discovery", "theme_keywords": ["growth", "wonder", "identity", "kindness"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "strange_world_reveal", "retention": "curiosity_chain" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.4, "denis_villeneuve": 0.15, "christopher_nolan": 0.2 }, "writers": { "paulo_coelho": 0.4, "haruki_murakami": 0.35, "noh_hee_kyung": 0.25 } }
+  },
+  {
+    "id": "oldboy",
+    "title": { "ko": "Oldeuboi", "en": "Oldboy" },
+    "year": 2003,
+    "category": "movie",
+    "genre": ["thriller", "mystery", "revenge"],
+    "style_vector": {
+      "camera": { "scale": 0.63, "movement_energy": 0.7, "closeup_ratio": 0.78, "primary_movements": ["precise_closeup", "lateral_glide", "violent_snap"], "signature": "ornamented_violence" },
+      "editing": { "pace": 0.72, "cut_rhythm": "elegant_shock", "cross_cutting": true, "time_manipulation": true },
+      "color": { "temperature": 0.34, "saturation": 0.69, "palette": ["midnight_blue", "blood_red", "sickly_green"], "mood": "seduction_and_dread" },
+      "audio": { "music_style": "ornate_tension", "music_intensity": 0.78, "silence_usage": 0.29, "sfx_style": "hyper_real_impact" },
+      "narrative": { "structure": "revenge_spiral", "emotion_arc": "rage_to_revelation_to_ruin", "pacing": "tightening_ramp", "theme_keywords": ["revenge", "guilt", "obsession", "punishment"] },
+      "hook": { "type": "tone_bait_switch", "first_3sec": "beautiful_image_with_threat", "retention": "moral_discomfort" }
+    },
+    "maps_to_presets": { "directors": { "park_chan_wook": 0.97, "bong_joon_ho": 0.2, "christopher_nolan": 0.25 }, "writers": { "agatha_christie": 0.35, "charlie_kaufman": 0.35, "aaron_sorkin": 0.1 } }
+  },
+  {
+    "id": "amelie",
+    "title": { "ko": "Ameli", "en": "Amelie" },
+    "year": 2001,
+    "category": "movie",
+    "genre": ["romance", "comedy", "fantasy"],
+    "style_vector": {
+      "camera": { "scale": 0.49, "movement_energy": 0.41, "closeup_ratio": 0.57, "primary_movements": ["storybook_pan", "symmetry_push", "quirky_closeup"], "signature": "whimsy_in_ordinary_life" },
+      "editing": { "pace": 0.48, "cut_rhythm": "playful_precision", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.76, "saturation": 0.82, "palette": ["warm_red", "gold", "emerald"], "mood": "romantic_whimsy" },
+      "audio": { "music_style": "accordion_folk", "music_intensity": 0.46, "silence_usage": 0.2, "sfx_style": "stylized_detail" },
+      "narrative": { "structure": "quirky_quest", "emotion_arc": "loneliness_to_connection", "pacing": "measured_playfulness", "theme_keywords": ["love", "city", "small_kindness", "play"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "quirky_visual_fact", "retention": "constant_charm" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.85, "edgar_wright": 0.25, "denis_villeneuve": 0.05 }, "writers": { "paulo_coelho": 0.25, "noh_hee_kyung": 0.4, "haruki_murakami": 0.2 } }
+  },
+  {
+    "id": "mad_max_fury_road",
+    "title": { "ko": "Mad Maekseu Fury Road", "en": "Mad Max: Fury Road" },
+    "year": 2015,
+    "category": "movie",
+    "genre": ["action", "adventure", "post_apocalypse"],
+    "style_vector": {
+      "camera": { "scale": 0.88, "movement_energy": 0.97, "closeup_ratio": 0.39, "primary_movements": ["kinetic_push", "vehicle_track", "impact_closeup"], "signature": "momentum_as_worldbuilding" },
+      "editing": { "pace": 0.94, "cut_rhythm": "percussive_sync", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.86, "saturation": 0.91, "palette": ["desert_orange", "chrome", "storm_blue"], "mood": "adrenaline_and_survival" },
+      "audio": { "music_style": "industrial_drive", "music_intensity": 0.93, "silence_usage": 0.07, "sfx_style": "mechanical_assault" },
+      "narrative": { "structure": "pursuit_gauntlet", "emotion_arc": "capture_to_resistance_to_release", "pacing": "constant_escalation", "theme_keywords": ["survival", "velocity", "freedom", "rebellion"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "instant_kinetic_impact", "retention": "constant_payoff" }
+    },
+    "maps_to_presets": { "directors": { "edgar_wright": 0.78, "denis_villeneuve": 0.22, "christopher_nolan": 0.18 }, "writers": { "aaron_sorkin": 0.15, "agatha_christie": 0.1, "paulo_coelho": 0.25 } }
+  },
+  {
+    "id": "moonlight",
+    "title": { "ko": "Munraiteu", "en": "Moonlight" },
+    "year": 2016,
+    "category": "movie",
+    "genre": ["drama", "coming_of_age"],
+    "style_vector": {
+      "camera": { "scale": 0.43, "movement_energy": 0.29, "closeup_ratio": 0.83, "primary_movements": ["lingering_closeup", "gentle_handheld", "slow_circle"], "signature": "intimate_fragility" },
+      "editing": { "pace": 0.31, "cut_rhythm": "emotional_breathing", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.52, "saturation": 0.54, "palette": ["night_blue", "teal", "skin_glow"], "mood": "tender_vulnerability" },
+      "audio": { "music_style": "minimal_orchestral", "music_intensity": 0.38, "silence_usage": 0.69, "sfx_style": "intimate_room_tone" },
+      "narrative": { "structure": "three_chapter_identity", "emotion_arc": "fear_to_search_to_acceptance", "pacing": "quiet_accumulation", "theme_keywords": ["identity", "masculinity", "tenderness", "healing"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "simple_image_with_weight", "retention": "earned_empathy" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.15, "wes_anderson": 0.1, "bong_joon_ho": 0.1 }, "writers": { "noh_hee_kyung": 0.55, "charlie_kaufman": 0.2, "paulo_coelho": 0.25 } }
+  },
+  {
+    "id": "inception",
+    "title": { "ko": "Insepsyeon", "en": "Inception" },
+    "year": 2010,
+    "category": "movie",
+    "genre": ["sci_fi", "thriller", "heist"],
+    "style_vector": {
+      "camera": { "scale": 0.89, "movement_energy": 0.63, "closeup_ratio": 0.41, "primary_movements": ["city_fold_wide", "steady_track", "slow_dolly"], "signature": "concept_as_spectacle" },
+      "editing": { "pace": 0.66, "cut_rhythm": "braided_precision", "cross_cutting": true, "time_manipulation": true },
+      "color": { "temperature": 0.44, "saturation": 0.47, "palette": ["steel", "snow_white", "warm_amber"], "mood": "urgent_awe" },
+      "audio": { "music_style": "orchestral_braam", "music_intensity": 0.89, "silence_usage": 0.31, "sfx_style": "impact_realism" },
+      "narrative": { "structure": "layered_heist", "emotion_arc": "control_to_loss_to_release", "pacing": "accelerating_crosscut", "theme_keywords": ["dreams", "guilt", "precision", "reality"] },
+      "hook": { "type": "mystery_question", "first_3sec": "impossible_visual", "retention": "conceptual_escalation" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.97, "denis_villeneuve": 0.32, "edgar_wright": 0.2 }, "writers": { "charlie_kaufman": 0.42, "aaron_sorkin": 0.15, "agatha_christie": 0.2 } }
+  },
+  {
+    "id": "grand_budapest_hotel",
+    "title": { "ko": "Grand Budapest Hotel", "en": "The Grand Budapest Hotel" },
+    "year": 2014,
+    "category": "movie",
+    "genre": ["comedy", "adventure", "drama"],
+    "style_vector": {
+      "camera": { "scale": 0.58, "movement_energy": 0.36, "closeup_ratio": 0.51, "primary_movements": ["center_lockoff", "lateral_pan", "symmetry_push"], "signature": "storybook_precision" },
+      "editing": { "pace": 0.44, "cut_rhythm": "chaptered_precision", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.72, "saturation": 0.79, "palette": ["powder_pink", "mustard", "deep_purple"], "mood": "whimsical_melancholy" },
+      "audio": { "music_style": "retro_chamber", "music_intensity": 0.43, "silence_usage": 0.26, "sfx_style": "stylized_detail" },
+      "narrative": { "structure": "nested_storybook", "emotion_arc": "play_to_loss_to_remembrance", "pacing": "measured_playfulness", "theme_keywords": ["memory", "ritual", "friendship", "loss"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "perfectly_arranged_frame", "retention": "quirk_reveal" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.98, "edgar_wright": 0.18, "christopher_nolan": 0.04 }, "writers": { "paulo_coelho": 0.2, "noh_hee_kyung": 0.35, "agatha_christie": 0.15 } }
+  },
+  {
+    "id": "blade_runner_2049",
+    "title": { "ko": "Beulleideu Reonneo 2049", "en": "Blade Runner 2049" },
+    "year": 2017,
+    "category": "movie",
+    "genre": ["sci_fi", "neo_noir", "drama"],
+    "style_vector": {
+      "camera": { "scale": 0.93, "movement_energy": 0.28, "closeup_ratio": 0.33, "primary_movements": ["monumental_wide", "slow_push", "silhouette_track"], "signature": "monumental_loneliness" },
+      "editing": { "pace": 0.29, "cut_rhythm": "patient_tension", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.27, "saturation": 0.39, "palette": ["toxic_orange", "neon_cyan", "concrete_black"], "mood": "austere_melancholy" },
+      "audio": { "music_style": "industrial_hum", "music_intensity": 0.71, "silence_usage": 0.72, "sfx_style": "low_frequency_weight" },
+      "narrative": { "structure": "investigation_revelation", "emotion_arc": "distance_to_longing", "pacing": "slow_burn", "theme_keywords": ["identity", "memory", "loneliness", "destiny"] },
+      "hook": { "type": "sensory_immersion", "first_3sec": "overwhelming_world_texture", "retention": "mystery_pressure" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.98, "christopher_nolan": 0.3, "park_chan_wook": 0.12 }, "writers": { "haruki_murakami": 0.4, "charlie_kaufman": 0.3, "paulo_coelho": 0.15 } }
+  },
+  {
+    "id": "the_godfather",
+    "title": { "ko": "Da Godpadeo", "en": "The Godfather" },
+    "year": 1972,
+    "category": "movie",
+    "genre": ["crime", "drama"],
+    "style_vector": {
+      "camera": { "scale": 0.57, "movement_energy": 0.24, "closeup_ratio": 0.63, "primary_movements": ["measured_track", "shadow_closeup", "tableau_wide"], "signature": "power_in_shadows" },
+      "editing": { "pace": 0.27, "cut_rhythm": "measured_gravity", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.56, "saturation": 0.22, "palette": ["mahogany", "tobacco", "shadow_black"], "mood": "ritual_and_dread" },
+      "audio": { "music_style": "operatic_restraint", "music_intensity": 0.44, "silence_usage": 0.58, "sfx_style": "classic_realism" },
+      "narrative": { "structure": "dynasty_fall", "emotion_arc": "inheritance_to_corruption", "pacing": "slow_consolidation", "theme_keywords": ["power", "family", "loyalty", "betrayal"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "quiet_line_with_threat", "retention": "inevitable_descent" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.2, "christopher_nolan": 0.15, "park_chan_wook": 0.22 }, "writers": { "agatha_christie": 0.32, "aaron_sorkin": 0.18, "noh_hee_kyung": 0.2 } }
+  },
+  {
+    "id": "her",
+    "title": { "ko": "Her", "en": "Her" },
+    "year": 2013,
+    "category": "movie",
+    "genre": ["romance", "drama", "sci_fi"],
+    "style_vector": {
+      "camera": { "scale": 0.46, "movement_energy": 0.2, "closeup_ratio": 0.79, "primary_movements": ["lingering_closeup", "gentle_push", "soft_pan"], "signature": "intimate_future_tenderness" },
+      "editing": { "pace": 0.23, "cut_rhythm": "reflective", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.69, "saturation": 0.43, "palette": ["peach", "soft_red", "cream"], "mood": "warm_loneliness" },
+      "audio": { "music_style": "ambient_minimal", "music_intensity": 0.33, "silence_usage": 0.76, "sfx_style": "soft_interface_detail" },
+      "narrative": { "structure": "relationship_unfolding", "emotion_arc": "isolation_to_connection_to_loss", "pacing": "quiet_accumulation", "theme_keywords": ["love", "technology", "loneliness", "growth"] },
+      "hook": { "type": "unsettling_normal", "first_3sec": "ordinary_intimacy_with_future_twist", "retention": "emotional_curiosity" }
+    },
+    "maps_to_presets": { "directors": { "wes_anderson": 0.2, "denis_villeneuve": 0.1, "christopher_nolan": 0.08 }, "writers": { "haruki_murakami": 0.42, "charlie_kaufman": 0.34, "noh_hee_kyung": 0.24 } }
+  },
+  {
+    "id": "everything_everywhere_all_at_once",
+    "title": { "ko": "Everything Everywhere All at Once", "en": "Everything Everywhere All at Once" },
+    "year": 2022,
+    "category": "movie",
+    "genre": ["comedy", "sci_fi", "action"],
+    "style_vector": {
+      "camera": { "scale": 0.72, "movement_energy": 0.91, "closeup_ratio": 0.58, "primary_movements": ["whip_pan", "kinetic_push", "intimate_closeup"], "signature": "chaos_with_heart" },
+      "editing": { "pace": 0.93, "cut_rhythm": "hyper_associative", "cross_cutting": true, "time_manipulation": true },
+      "color": { "temperature": 0.57, "saturation": 0.88, "palette": ["neon_green", "hot_pink", "office_beige"], "mood": "surreal_empathy" },
+      "audio": { "music_style": "genre_collage", "music_intensity": 0.87, "silence_usage": 0.16, "sfx_style": "comic_hyperreal" },
+      "narrative": { "structure": "multiverse_spiral", "emotion_arc": "chaos_to_connection", "pacing": "constant_escalation", "theme_keywords": ["family", "absurdity", "choice", "meaning"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "instant_absurdity", "retention": "emotional_payoff" }
+    },
+    "maps_to_presets": { "directors": { "edgar_wright": 0.65, "christopher_nolan": 0.28, "wes_anderson": 0.18 }, "writers": { "charlie_kaufman": 0.56, "noh_hee_kyung": 0.2, "aaron_sorkin": 0.12 } }
+  },
+  {
+    "id": "in_the_mood_for_love",
+    "title": { "ko": "Hwaseongnyeon", "en": "In the Mood for Love" },
+    "year": 2000,
+    "category": "movie",
+    "genre": ["romance", "drama"],
+    "style_vector": {
+      "camera": { "scale": 0.41, "movement_energy": 0.19, "closeup_ratio": 0.81, "primary_movements": ["hallway_track", "lingering_closeup", "slow_pan"], "signature": "desire_in_distance" },
+      "editing": { "pace": 0.18, "cut_rhythm": "elliptical_longing", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.73, "saturation": 0.57, "palette": ["crimson", "amber", "rainy_green"], "mood": "romantic_restraint" },
+      "audio": { "music_style": "waltz_refrain", "music_intensity": 0.27, "silence_usage": 0.82, "sfx_style": "ambient_intimacy" },
+      "narrative": { "structure": "missed_connection", "emotion_arc": "curiosity_to_longing_to_resignation", "pacing": "slow_drift", "theme_keywords": ["desire", "memory", "timing", "restraint"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "simple_gesture_with_hidden_weight", "retention": "unfinished_desire" }
+    },
+    "maps_to_presets": { "directors": { "park_chan_wook": 0.18, "wes_anderson": 0.08, "denis_villeneuve": 0.2 }, "writers": { "noh_hee_kyung": 0.52, "haruki_murakami": 0.28, "paulo_coelho": 0.2 } }
+  },
+  {
+    "id": "pans_labyrinth",
+    "title": { "ko": "Panui Mir", "en": "Pan's Labyrinth" },
+    "year": 2006,
+    "category": "movie",
+    "genre": ["fantasy", "war", "drama"],
+    "style_vector": {
+      "camera": { "scale": 0.79, "movement_energy": 0.47, "closeup_ratio": 0.52, "primary_movements": ["forest_track", "creature_reveal", "slow_push"], "signature": "myth_against_violence" },
+      "editing": { "pace": 0.49, "cut_rhythm": "fairy_tale_threat", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.35, "saturation": 0.63, "palette": ["moss_green", "rust_red", "moon_blue"], "mood": "dark_wonder" },
+      "audio": { "music_style": "lullaby_dread", "music_intensity": 0.61, "silence_usage": 0.39, "sfx_style": "creature_textures" },
+      "narrative": { "structure": "mythic_escape", "emotion_arc": "fear_to_defiance_to_transcendence", "pacing": "measured_escalation", "theme_keywords": ["innocence", "war", "imagination", "resistance"] },
+      "hook": { "type": "visual_spectacle", "first_3sec": "mythic_image_with_dread", "retention": "dual_world_tension" }
+    },
+    "maps_to_presets": { "directors": { "park_chan_wook": 0.22, "denis_villeneuve": 0.24, "christopher_nolan": 0.16 }, "writers": { "paulo_coelho": 0.35, "agatha_christie": 0.12, "haruki_murakami": 0.22 } }
+  },
+  {
+    "id": "the_dark_knight",
+    "title": { "ko": "Da Dakeu Naitu", "en": "The Dark Knight" },
+    "year": 2008,
+    "category": "movie",
+    "genre": ["action", "crime", "thriller"],
+    "style_vector": {
+      "camera": { "scale": 0.84, "movement_energy": 0.67, "closeup_ratio": 0.47, "primary_movements": ["imax_wide", "city_track", "urgent_closeup"], "signature": "urban_scale_pressure" },
+      "editing": { "pace": 0.69, "cut_rhythm": "braided_precision", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.31, "saturation": 0.36, "palette": ["graphite", "police_blue", "fire_orange"], "mood": "moral_pressure" },
+      "audio": { "music_style": "percussive_dread", "music_intensity": 0.88, "silence_usage": 0.22, "sfx_style": "urban_impact" },
+      "narrative": { "structure": "chaos_vs_order", "emotion_arc": "control_to_breakdown", "pacing": "relentless_escalation", "theme_keywords": ["order", "chaos", "sacrifice", "identity"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "instantly_threatening_image", "retention": "moral_stakes" }
+    },
+    "maps_to_presets": { "directors": { "christopher_nolan": 0.92, "bong_joon_ho": 0.2, "edgar_wright": 0.12 }, "writers": { "aaron_sorkin": 0.18, "agatha_christie": 0.24, "charlie_kaufman": 0.18 } }
+  },
+  {
+    "id": "portrait_of_a_lady_on_fire",
+    "title": { "ko": "Portrait of a Lady on Fire", "en": "Portrait of a Lady on Fire" },
+    "year": 2019,
+    "category": "movie",
+    "genre": ["romance", "drama", "period"],
+    "style_vector": {
+      "camera": { "scale": 0.39, "movement_energy": 0.14, "closeup_ratio": 0.77, "primary_movements": ["lingering_closeup", "still_tableau", "small_reframe"], "signature": "gaze_as_revelation" },
+      "editing": { "pace": 0.16, "cut_rhythm": "patient_observation", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.64, "saturation": 0.36, "palette": ["sea_blue", "candle_gold", "dress_black"], "mood": "restrained_longing" },
+      "audio": { "music_style": "near_silence", "music_intensity": 0.14, "silence_usage": 0.91, "sfx_style": "intimate_ambient" },
+      "narrative": { "structure": "forbidden_connection", "emotion_arc": "distance_to_desire_to_memory", "pacing": "slow_burn", "theme_keywords": ["gaze", "desire", "memory", "freedom"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "quiet_image_with_hidden_charge", "retention": "subtle_tension" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.14, "park_chan_wook": 0.18, "wes_anderson": 0.06 }, "writers": { "noh_hee_kyung": 0.46, "haruki_murakami": 0.22, "paulo_coelho": 0.18 } }
+  },
+  {
+    "id": "whiplash",
+    "title": { "ko": "Wipeullaesi", "en": "Whiplash" },
+    "year": 2014,
+    "category": "movie",
+    "genre": ["drama", "music"],
+    "style_vector": {
+      "camera": { "scale": 0.48, "movement_energy": 0.79, "closeup_ratio": 0.74, "primary_movements": ["impact_closeup", "rhythm_track", "snap_zoom"], "signature": "performance_as_combat" },
+      "editing": { "pace": 0.82, "cut_rhythm": "percussive_sync", "cross_cutting": true, "time_manipulation": false },
+      "color": { "temperature": 0.53, "saturation": 0.41, "palette": ["jazz_gold", "blood_red", "black"], "mood": "obsessive_pressure" },
+      "audio": { "music_style": "jazz_assault", "music_intensity": 0.92, "silence_usage": 0.11, "sfx_style": "instrumental_impact" },
+      "narrative": { "structure": "mentor_war", "emotion_arc": "ambition_to_breaking_point", "pacing": "accelerating_pressure", "theme_keywords": ["perfection", "discipline", "abuse", "ambition"] },
+      "hook": { "type": "pattern_interrupt", "first_3sec": "sudden_audio_hit", "retention": "escalating_conflict" }
+    },
+    "maps_to_presets": { "directors": { "edgar_wright": 0.55, "christopher_nolan": 0.2, "park_chan_wook": 0.24 }, "writers": { "aaron_sorkin": 0.34, "charlie_kaufman": 0.2, "agatha_christie": 0.12 } }
+  },
+  {
+    "id": "arrival",
+    "title": { "ko": "Arraibeol", "en": "Arrival" },
+    "year": 2016,
+    "category": "movie",
+    "genre": ["sci_fi", "drama", "mystery"],
+    "style_vector": {
+      "camera": { "scale": 0.87, "movement_energy": 0.26, "closeup_ratio": 0.41, "primary_movements": ["monumental_wide", "slow_push", "fog_track"], "signature": "awe_through_restraint" },
+      "editing": { "pace": 0.24, "cut_rhythm": "patient_tension", "cross_cutting": false, "time_manipulation": true },
+      "color": { "temperature": 0.33, "saturation": 0.31, "palette": ["fog_gray", "ink_black", "soft_gold"], "mood": "grief_and_revelation" },
+      "audio": { "music_style": "breathing_ambient", "music_intensity": 0.53, "silence_usage": 0.74, "sfx_style": "otherworldly_pressure" },
+      "narrative": { "structure": "linguistic_revelation", "emotion_arc": "uncertainty_to_awe_to_grief", "pacing": "slow_burn", "theme_keywords": ["language", "time", "loss", "connection"] },
+      "hook": { "type": "mystery_question", "first_3sec": "monumental_unknown_object", "retention": "philosophical_mystery" }
+    },
+    "maps_to_presets": { "directors": { "denis_villeneuve": 0.97, "christopher_nolan": 0.26, "wes_anderson": 0.02 }, "writers": { "paulo_coelho": 0.32, "charlie_kaufman": 0.28, "noh_hee_kyung": 0.24 } }
+  },
+  {
+    "id": "shoplifters",
+    "title": { "ko": "Manbiki Kazoku", "en": "Shoplifters" },
+    "year": 2018,
+    "category": "movie",
+    "genre": ["drama", "family"],
+    "style_vector": {
+      "camera": { "scale": 0.37, "movement_energy": 0.22, "closeup_ratio": 0.72, "primary_movements": ["patient_two_shot", "small_pan", "observational_closeup"], "signature": "tenderness_inside_precarity" },
+      "editing": { "pace": 0.21, "cut_rhythm": "observational", "cross_cutting": false, "time_manipulation": false },
+      "color": { "temperature": 0.61, "saturation": 0.28, "palette": ["soft_brown", "rainy_blue", "warm_window_light"], "mood": "gentle_sadness" },
+      "audio": { "music_style": "minimal_piano", "music_intensity": 0.21, "silence_usage": 0.83, "sfx_style": "domestic_detail" },
+      "narrative": { "structure": "found_family_exposure", "emotion_arc": "comfort_to_fragility_to_truth", "pacing": "quiet_accumulation", "theme_keywords": ["family", "poverty", "kindness", "belonging"] },
+      "hook": { "type": "false_sincerity", "first_3sec": "ordinary_family_moment_with_gap", "retention": "earned_empathy" }
+    },
+    "maps_to_presets": { "directors": { "bong_joon_ho": 0.26, "wes_anderson": 0.04, "denis_villeneuve": 0.06 }, "writers": { "noh_hee_kyung": 0.58, "paulo_coelho": 0.16, "haruki_murakami": 0.2 } }
+  }
+]

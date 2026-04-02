@@ -17,6 +17,10 @@ test("prints built-in profile catalog for config --json", () => {
   assert.equal(parsed.default_profile, "youtube_explainer");
   assert.ok(parsed.profiles?.some((profile) => profile.profile_id === "novel_cliffhanger"));
   assert.ok(parsed.supported_commands?.includes("publish"));
+  assert.ok(parsed.supported_commands?.includes("taste"));
+  assert.ok(parsed.supported_commands?.includes("feedback"));
+  assert.ok(parsed.supported_commands?.includes("quality"));
+  assert.ok(parsed.supported_commands?.includes("interactive"));
 });
 
 test("prints short human-readable config summary", () => {

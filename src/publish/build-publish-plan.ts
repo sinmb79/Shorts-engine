@@ -4,20 +4,26 @@ import type {
   PromptResult,
   PublishPlan,
   RenderPlan,
+  ScenarioPlan,
 } from "../domain/contracts.js";
 import { createRequestId } from "../shared/request-id.js";
+import type { TrendContext } from "../trends/trend-radar.js";
 
 export function buildPublishPlan(input: {
   effectiveRequest: NormalizedRequest;
   platformOutputSpec: PlatformOutputSpec;
   promptResult: PromptResult;
   renderPlan: RenderPlan;
+  scenarioPlan: ScenarioPlan;
+  trendContext?: TrendContext | null;
 }): PublishPlan {
   const {
     effectiveRequest,
     platformOutputSpec,
     promptResult,
     renderPlan,
+    scenarioPlan,
+    trendContext,
   } = input;
 
   return {
@@ -27,10 +33,11 @@ export function buildPublishPlan(input: {
     title: effectiveRequest.base.intent.topic,
     description: [
       effectiveRequest.base.intent.goal,
+      `Story: ${scenarioPlan.summary}`,
       `Theme: ${effectiveRequest.base.intent.theme}`,
-      `Hook: ${renderPlan.segments[0]?.motion ?? "n/a"}`,
+      `Hook: ${renderPlan.segments[0]?.caption_text || renderPlan.segments[0]?.motion || "n/a"}`,
     ].join(" | "),
-    hashtags: buildHashtags(effectiveRequest),
+    hashtags: buildHashtags(effectiveRequest, trendContext ?? null),
     cta: buildCta(platformOutputSpec.platform),
     upload_checklist: [
       "review_cover_frame",
@@ -38,16 +45,21 @@ export function buildPublishPlan(input: {
       "confirm_caption_timing",
       "attach_platform_metadata",
     ],
-    warnings: [...promptResult.warnings],
+    warnings: [...promptResult.warnings, ...(trendContext?.warnings ?? [])],
   };
 }
 
-function buildHashtags(effectiveRequest: NormalizedRequest): string[] {
+function buildHashtags(
+  effectiveRequest: NormalizedRequest,
+  trendContext: TrendContext | null,
+): string[] {
   const themeTag = toHashtag(effectiveRequest.base.intent.theme);
   const platformTag = toHashtag(effectiveRequest.base.intent.platform);
   const topicTag = toHashtag(effectiveRequest.base.intent.topic.split(" ").slice(0, 2).join(" "));
 
-  return [themeTag, platformTag, topicTag].filter((value, index, all) => Boolean(value) && all.indexOf(value) === index);
+  return [themeTag, platformTag, topicTag, ...(trendContext?.hashtags ?? [])].filter(
+    (value, index, all) => Boolean(value) && all.indexOf(value) === index,
+  );
 }
 
 function toHashtag(value: string): string {

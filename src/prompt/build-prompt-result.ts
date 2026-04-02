@@ -6,9 +6,13 @@ import type {
   NovelShortsPlan,
   PlatformOutputSpec,
   PromptResult,
+  QualityGateResult,
   RoutingDecision,
+  ScenarioPlan,
   ScoringResult,
+  StyleResolution,
 } from "../domain/contracts.js";
+import type { TrendContext } from "../trends/trend-radar.js";
 
 export function buildPromptResult(input: {
   brollPlan: BrollPlan;
@@ -16,9 +20,13 @@ export function buildPromptResult(input: {
   learningState: LearningState;
   motionPlan: MotionPlan;
   platformOutputSpec: PlatformOutputSpec;
+  qualityGate: QualityGateResult;
   routing: RoutingDecision;
+  scenarioPlan: ScenarioPlan;
   scoring: ScoringResult;
+  styleResolution: StyleResolution;
   novelShortsPlan: NovelShortsPlan | null;
+  trendContext?: TrendContext | null;
 }): PromptResult {
   const {
     brollPlan,
@@ -27,13 +35,19 @@ export function buildPromptResult(input: {
     motionPlan,
     novelShortsPlan,
     platformOutputSpec,
+    qualityGate,
     routing,
+    scenarioPlan,
     scoring,
+    styleResolution,
+    trendContext,
   } = input;
   const warnings = [
     ...platformOutputSpec.warnings,
     ...motionPlan.warnings,
     ...brollPlan.warnings,
+    ...qualityGate.warnings,
+    ...(trendContext?.warnings ?? []),
     ...(learningState.confidence === "low" ? ["low_learning_confidence_uses_priors"] : []),
   ];
 
@@ -45,7 +59,10 @@ export function buildPromptResult(input: {
       platformOutputSpec,
       motionPlan,
       brollPlan,
+      scenarioPlan,
+      styleResolution,
       novelShortsPlan,
+      trendContext ?? null,
     ),
     negative_prompt: "unsafe, graphic, policy-violating content",
     style_descriptor: [
@@ -59,7 +76,7 @@ export function buildPromptResult(input: {
       duration_sec: platformOutputSpec.effective_duration_sec,
     },
     quality_score: roundScore(
-      (scoring.candidate_score + scoring.quality_tier_score) / 2,
+      qualityGate.overall_score / 100,
     ),
   };
 }
@@ -69,7 +86,10 @@ function buildMainPrompt(
   platformOutputSpec: PlatformOutputSpec,
   motionPlan: MotionPlan,
   brollPlan: BrollPlan,
+  scenarioPlan: ScenarioPlan,
+  styleResolution: StyleResolution,
   novelShortsPlan: NovelShortsPlan | null,
+  trendContext: TrendContext | null,
 ): string {
   const sections = [
     `Scene: ${effectiveRequest.base.intent.topic}.`,
@@ -80,10 +100,44 @@ function buildMainPrompt(
     `Platform: ${platformOutputSpec.platform}.`,
     `Hook motion: ${motionPlan.hook_motion.selected}.`,
     `Hook B-roll concept: ${brollPlan.segments[0]?.concept ?? "n/a"}.`,
+    `Scenario structure: ${scenarioPlan.structure}.`,
+    `Scenario summary: ${scenarioPlan.summary}.`,
   ];
+
+  if (styleResolution.source === "taste_profile") {
+    const topDirector = Object.entries(styleResolution.director_matches)[0]?.[0];
+    const topWriter = Object.entries(styleResolution.writer_matches)[0]?.[0];
+    sections.push(`Style source: taste profile ${styleResolution.taste_profile_id}.`);
+    sections.push(`Resolved camera language: ${styleResolution.resolved_style.camera_language}.`);
+    sections.push(`Resolved pacing: ${styleResolution.resolved_style.pacing_profile}.`);
+    sections.push(`Color palette: ${styleResolution.color_palette.join(", ")}.`);
+    sections.push(`Mood: ${styleResolution.mood ?? "n/a"}.`);
+    if (topDirector) {
+      sections.push(`Director anchor: ${topDirector}.`);
+    }
+    if (topWriter) {
+      sections.push(`Writer anchor: ${topWriter}.`);
+    }
+    if (styleResolution.concept_keywords.length > 0) {
+      sections.push(`Visual concepts: ${styleResolution.concept_keywords.join(", ")}.`);
+    }
+  }
 
   if (novelShortsPlan) {
     sections.push(`Novel highlight: ${novelShortsPlan.highlight_candidate}.`);
+  }
+
+  if (trendContext?.keywords.length) {
+    sections.push(`Trend keywords: ${trendContext.keywords.join(", ")}.`);
+  }
+
+  if (trendContext?.hashtags.length) {
+    sections.push(`Trend hashtags: ${trendContext.hashtags.join(", ")}.`);
+  }
+
+  for (const scene of scenarioPlan.scenes) {
+    sections.push(`Scenario beat ${scene.role}: ${scene.scenario_text_en}.`);
+    sections.push(`Scene prompt ${scene.role}: ${scene.ai_prompt_fragment}.`);
   }
 
   return sections.join(" ");

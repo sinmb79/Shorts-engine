@@ -1,4 +1,6 @@
 import { buildPromptResult } from "../prompt/build-prompt-result.js";
+import { refinePromptWithLlm } from "../llm/refine-loop.js";
+import { persistGeneratedScenario } from "../quality/persist-generated-scenario.js";
 import { createRequestId } from "../shared/request-id.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
@@ -12,7 +14,7 @@ import { resolvePlanningContext } from "./resolve-planning-context.js";
 
 export async function promptEngineCommand(
   requestPath: string,
-  options: { json: boolean },
+  options: { json: boolean; llm: boolean; provider: string | null; trend_aware: boolean },
 ): Promise<{ exitCode: number; output: string }> {
   let requestId = createRequestId({ request_path: requestPath });
 
@@ -29,6 +31,10 @@ export async function promptEngineCommand(
             request_id: requestId,
             validation: loaded.validation,
             normalized_request: null,
+            style_resolution: null,
+            scenario_plan: null,
+            quality_gate: null,
+            llm_refinement: null,
             platform_output_spec: null,
             novel_shorts_plan: null,
             motion_plan: null,
@@ -44,7 +50,10 @@ export async function promptEngineCommand(
       };
     }
 
-    const planningContext = resolvePlanningContext(loaded.request);
+    const planningContext = await resolvePlanningContext(loaded.request, {
+      trend_aware: options.trend_aware,
+    });
+    await persistGeneratedScenario(planningContext);
     const promptResult = buildPromptResult({
       brollPlan: planningContext.broll_plan,
       effectiveRequest: planningContext.effective_request,
@@ -52,13 +61,21 @@ export async function promptEngineCommand(
       motionPlan: planningContext.motion_plan,
       novelShortsPlan: planningContext.novel_shorts_plan,
       platformOutputSpec: planningContext.platform_output_spec,
+      qualityGate: planningContext.quality_gate,
       routing: planningContext.routing,
+      scenarioPlan: planningContext.scenario_plan,
       scoring: planningContext.scoring,
+      styleResolution: planningContext.style_resolution,
+      trendContext: planningContext.trend_context,
+    });
+    const refined = await refinePromptWithLlm(planningContext, promptResult, {
+      enabled: options.llm,
+      provider: options.provider,
     });
 
     return {
       exitCode: EXIT_CODE_SUCCESS,
-      output: renderPromptOutput(promptResult, options.json),
+      output: renderPromptOutput(refined.promptResult, options.json),
     };
   } catch (error) {
     return {

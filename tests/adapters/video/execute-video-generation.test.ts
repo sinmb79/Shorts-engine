@@ -21,7 +21,7 @@ function makeMockAdapter(name: string): VideoGenerationAdapter {
 
 test("executeVideoGeneration returns result for all nodes", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = await resolvePlanningContext(request);
   const mockAdapter = makeMockAdapter("mock");
 
   const result = await executeVideoGeneration(context, {
@@ -37,7 +37,7 @@ test("executeVideoGeneration returns result for all nodes", async () => {
 
 test("executeVideoGeneration summary counts dry_run correctly", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = await resolvePlanningContext(request);
   const mockAdapter = makeMockAdapter("mock");
 
   const result = await executeVideoGeneration(context, {
@@ -51,7 +51,7 @@ test("executeVideoGeneration summary counts dry_run correctly", async () => {
 
 test("buildPromptFromPlanningContext returns valid prompt", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const context = resolvePlanningContext(request);
+  const context = await resolvePlanningContext(request);
 
   const prompt = buildPromptFromPlanningContext(context);
 

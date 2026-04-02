@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import * as path from "node:path";
 
 import { buildRequestScaffold } from "../create/build-request-scaffold.js";
+import { buildTemplateRequestScaffold } from "../create/build-template-request-scaffold.js";
 import {
   EXIT_CODE_INTERNAL_ERROR,
   EXIT_CODE_SUCCESS,
@@ -11,10 +12,13 @@ import { renderCreateOutput } from "./render-create-output.js";
 export async function createEngineCommand(
   profileId: string,
   outputPath: string,
-  options: { json: boolean },
+  options: { json: boolean; source?: "profile" | "template" },
 ): Promise<{ exitCode: number; output: string }> {
   try {
-    const result = buildRequestScaffold(profileId, outputPath);
+    const result =
+      options.source === "template"
+        ? buildTemplateRequestScaffold(profileId, outputPath)
+        : buildRequestScaffold(profileId, outputPath);
     await mkdir(path.dirname(outputPath), { recursive: true });
     await writeFile(outputPath, `${JSON.stringify(result.request, null, 2)}\n`, "utf8");
 

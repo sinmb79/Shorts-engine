@@ -7,6 +7,7 @@ import type {
   MotionSegmentRole,
   NormalizedRequest,
   PlatformOutputSpec,
+  StyleResolution,
 } from "../domain/contracts.js";
 import {
   COMMON_MOTION_RULES,
@@ -35,6 +36,15 @@ const LOOP_RISK_RANK = {
   medium: 1,
 } as const;
 
+const DIRECTOR_MOTION_WEIGHTS: Record<string, Partial<Record<MotionName, number>>> = {
+  bong_joon_ho: { pan_left: 2, pan_right: 2, zoom_in: 1 },
+  christopher_nolan: { zoom_in: 2, zoom_out: 2, parallax: 1 },
+  denis_villeneuve: { zoom_out: 3, parallax: 2, rotate_slow: 2 },
+  edgar_wright: { zoom_in: 3, pan_left: 3, pan_right: 3, glitch_transition: 1 },
+  park_chan_wook: { parallax: 2, zoom_in: 2, zoom_out: 1 },
+  wes_anderson: { parallax: 3, zoom_out: 2, rotate_slow: 2 },
+};
+
 interface EvaluatedCandidate {
   motion: MotionName;
   score: number;
@@ -52,6 +62,7 @@ interface SelectionState {
 export function resolveMotionPlan(
   normalizedRequest: NormalizedRequest,
   platformOutputSpec: PlatformOutputSpec,
+  styleResolution?: StyleResolution,
 ): MotionPlan {
   const loopFlag = normalizedRequest.base.output.type === "loop_video_prompt";
   const theme = normalizedRequest.base.intent.theme;
@@ -70,6 +81,7 @@ export function resolveMotionPlan(
       theme,
       pacingProfile,
       loopFlag,
+      styleResolution,
       recentMotions,
       state,
     );
@@ -157,6 +169,7 @@ function selectMotionForSegment(
   theme: string,
   pacingProfile: string,
   loopFlag: boolean,
+  styleResolution: StyleResolution | undefined,
   recentMotions: MotionName[],
   state: SelectionState,
 ): MotionAssignment {
@@ -168,6 +181,7 @@ function selectMotionForSegment(
       theme,
       pacingProfile,
       loopFlag,
+      styleResolution,
       recentMotions,
     );
   });
@@ -221,6 +235,7 @@ function evaluateCandidate(
   theme: string,
   pacingProfile: string,
   loopFlag: boolean,
+  styleResolution: StyleResolution | undefined,
   recentMotions: MotionName[],
 ): EvaluatedCandidate {
   const blockedRules: string[] = [];
@@ -250,11 +265,35 @@ function evaluateCandidate(
       getPlatformWeight(platform, motion) +
       getThemeWeight(theme, motion) +
       getPacingWeight(pacingProfile, motion) +
+      getStyleWeight(styleResolution, motion) +
       getRoleWeight(segment.role, motion),
     platformWeight: getPlatformWeight(platform, motion),
     repetitionConflicts: countRepetitionConflicts(recentMotions, motion),
     blockedRules,
   };
+}
+
+function getStyleWeight(
+  styleResolution: StyleResolution | undefined,
+  motion: MotionName,
+): number {
+  if (!styleResolution || styleResolution.source !== "taste_profile") {
+    return 0;
+  }
+
+  const directorMatches = Object.entries(styleResolution.director_matches).sort((left, right) => right[1] - left[1]);
+  const topDirector = directorMatches[0];
+  if (!topDirector) {
+    return 0;
+  }
+
+  const [directorId, weight] = topDirector;
+  const baseWeight = DIRECTOR_MOTION_WEIGHTS[directorId]?.[motion] ?? 0;
+  if (baseWeight === 0) {
+    return 0;
+  }
+
+  return weight >= 0.6 ? baseWeight + 1 : baseWeight;
 }
 
 function compareCandidates(left: EvaluatedCandidate, right: EvaluatedCandidate): number {

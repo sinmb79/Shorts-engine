@@ -1,6 +1,7 @@
 import { writeFile } from "node:fs/promises";
 
 import { resolveAdapter } from "../adapters/video/adapter-registry.js";
+import { persistGeneratedScenario } from "../quality/persist-generated-scenario.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
 import { loadEngineRequest } from "./load-engine-request.js";
 import {
@@ -33,7 +34,7 @@ function renderExecuteOutput(result: ExecuteVideoResult, json: boolean): string 
 
 export async function executeEngineCommand(
   requestPath: string,
-  options: { json: boolean; dry_run: boolean },
+  options: { json: boolean; dry_run: boolean; trend_aware?: boolean },
 ): Promise<{ exitCode: number; output: string }> {
   try {
     const loaded = await loadEngineRequest(requestPath);
@@ -45,7 +46,10 @@ export async function executeEngineCommand(
       };
     }
 
-    const context = resolvePlanningContext(loaded.request);
+    const context = await resolvePlanningContext(loaded.request, {
+      trend_aware: options.trend_aware ?? false,
+    });
+    await persistGeneratedScenario(context);
     const result = await executeVideoGeneration(context, {
       dry_run: options.dry_run,
       resolveAdapter,

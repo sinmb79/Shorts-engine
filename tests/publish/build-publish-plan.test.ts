@@ -11,7 +11,7 @@ import { loadFixture } from "../helpers/load-fixture.js";
 
 test("builds a platform-aware publish manifest from render output", async () => {
   const request = await loadFixture<EngineRequest>("valid-low-cost-request.json");
-  const planningContext = resolvePlanningContext(request);
+  const planningContext = await resolvePlanningContext(request);
   const promptResult = buildPromptResult({
     brollPlan: planningContext.broll_plan,
     effectiveRequest: planningContext.effective_request,
@@ -19,8 +19,11 @@ test("builds a platform-aware publish manifest from render output", async () => 
     motionPlan: planningContext.motion_plan,
     novelShortsPlan: planningContext.novel_shorts_plan,
     platformOutputSpec: planningContext.platform_output_spec,
+    qualityGate: planningContext.quality_gate,
     routing: planningContext.routing,
+    scenarioPlan: planningContext.scenario_plan,
     scoring: planningContext.scoring,
+    styleResolution: planningContext.style_resolution,
   });
   const renderPlan = buildRenderPlan({
     requestId: createRequestId(request),
@@ -30,18 +33,21 @@ test("builds a platform-aware publish manifest from render output", async () => 
     promptResult,
     routing: planningContext.routing,
     platformOutputSpec: planningContext.platform_output_spec,
+    scenarioPlan: planningContext.scenario_plan,
   });
 
   const publishPlan = buildPublishPlan({
     effectiveRequest: planningContext.effective_request,
-    platformOutputSpec: planningContext.platform_output_spec,
-    promptResult,
-    renderPlan,
+      platformOutputSpec: planningContext.platform_output_spec,
+      promptResult,
+      renderPlan,
+      scenarioPlan: planningContext.scenario_plan,
   });
 
   assert.equal(publishPlan.schema_version, "0.1");
   assert.equal(publishPlan.platform, "youtube_shorts");
   assert.match(publishPlan.title, /AI meeting note tool/);
+  assert.match(publishPlan.description, /Story:/);
   assert.ok(publishPlan.hashtags.some((tag: string) => tag === "#explainer"));
   assert.equal(publishPlan.warnings.length >= 0, true);
 });

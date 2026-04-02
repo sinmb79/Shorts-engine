@@ -2,6 +2,7 @@
 import { writeFile } from "node:fs/promises";
 
 import { resolveUploadAdapter } from "../adapters/upload/upload-adapter-registry.js";
+import { persistGeneratedScenario } from "../quality/persist-generated-scenario.js";
 import { resolvePlanningContext } from "./resolve-planning-context.js";
 import { loadEngineRequest } from "./load-engine-request.js";
 import {
@@ -33,7 +34,7 @@ function renderUploadOutput(result: ExecuteUploadResult, json: boolean): string 
 export async function uploadEngineCommand(
   requestPath: string,
   videoPath: string,
-  options: { json: boolean; dry_run: boolean },
+  options: { json: boolean; dry_run: boolean; trend_aware?: boolean },
 ): Promise<{ exitCode: number; output: string }> {
   try {
     const loaded = await loadEngineRequest(requestPath);
@@ -45,7 +46,10 @@ export async function uploadEngineCommand(
       };
     }
 
-    const context = resolvePlanningContext(loaded.request);
+    const context = await resolvePlanningContext(loaded.request, {
+      trend_aware: options.trend_aware ?? false,
+    });
+    await persistGeneratedScenario(context);
     const result = await executeUpload(context, videoPath, {
       dry_run: options.dry_run,
       resolveUploadAdapter,

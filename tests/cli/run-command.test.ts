@@ -1,18 +1,24 @@
 import { test } from "node:test";
 import * as assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import * as path from "node:path";
 
 import { runCli } from "../helpers/run-cli.js";
+import { seedTasteProfile } from "../helpers/seed-taste-profile.js";
 
 test("prints structured JSON for run --json", () => {
   const result = runCli(["run", "tests/fixtures/valid-low-cost-request.json", "--json"]);
   const parsed = JSON.parse(result.stdout) as {
     request_id?: string;
     validation?: { valid?: boolean };
+    quality_gate?: { overall_score?: number; pass?: boolean };
   };
 
   assert.equal(result.exitCode, 0);
   assert.equal(parsed.validation?.valid, true);
   assert.equal(typeof parsed.request_id, "string");
+   assert.equal(typeof parsed.quality_gate?.overall_score, "number");
+   assert.equal(parsed.quality_gate?.pass, true);
 });
 
 test("returns exit code 2 for validation failures", () => {
@@ -55,6 +61,9 @@ test("includes platform_output_spec in run --json output", () => {
 test("includes motion_plan in run --json output", () => {
   const result = runCli(["run", "tests/fixtures/valid-low-cost-request.json", "--json"]);
   const parsed = JSON.parse(result.stdout) as {
+    scenario_plan?: {
+      scenes?: Array<{ role?: string; block_id?: string }>;
+    };
     motion_plan?: {
       schema_version?: string;
       motion_sequence?: Array<{ segment_id?: string }>;
@@ -63,6 +72,7 @@ test("includes motion_plan in run --json output", () => {
   };
 
   assert.equal(result.exitCode, 0);
+  assert.equal(parsed.scenario_plan?.scenes?.[0]?.role, "hook");
   assert.equal(parsed.motion_plan?.schema_version, "0.1");
   assert.equal(parsed.motion_plan?.motion_sequence?.[0]?.segment_id, "hook");
   assert.equal(parsed.motion_plan?.hook_motion?.required, true);
@@ -123,7 +133,46 @@ test("prints platform summary lines in human-readable output", () => {
   const result = runCli(["run", "tests/fixtures/valid-low-cost-request.json"]);
 
   assert.equal(result.exitCode, 0);
+  assert.match(result.stdout, /Scenario ID:/);
+  assert.match(result.stdout, /Style source:/);
+  assert.match(result.stdout, /Quality gate:/);
   assert.match(result.stdout, /Platform: youtube_shorts/);
   assert.match(result.stdout, /Effective duration: 20s/);
   assert.match(result.stdout, /Warnings: 0/);
+});
+
+test("applies the saved taste profile during run planning", async () => {
+  const tempHome = mkdtempSync(path.join(process.cwd(), "tmp-run-taste-"));
+  const env = { SHORTS_ENGINE_HOME: tempHome };
+
+  try {
+    const profile = await seedTasteProfile(env, {
+      profile_id: "taste_run_integration",
+    });
+    const result = runCli(["run", "tests/fixtures/valid-low-cost-request.json", "--json"], {
+      env,
+    });
+    const parsed = JSON.parse(result.stdout) as {
+      style_resolution?: {
+        source?: string;
+        taste_profile_id?: string | null;
+        resolved_style?: { camera_language?: string; pacing_profile?: string };
+        concept_keywords?: string[];
+      };
+      scenario_plan?: {
+        director_anchor?: string | null;
+        blocks_used?: string[];
+      };
+    };
+
+    assert.equal(result.exitCode, 0);
+    assert.equal(parsed.style_resolution?.source, "taste_profile");
+    assert.equal(parsed.style_resolution?.taste_profile_id, profile.profile_id);
+    assert.equal(parsed.style_resolution?.resolved_style?.camera_language, "symmetry_tableau");
+    assert.ok(parsed.style_resolution?.concept_keywords?.includes("simplicity"));
+    assert.equal(parsed.scenario_plan?.director_anchor, "wes_anderson");
+    assert.equal(parsed.scenario_plan?.blocks_used?.[0], "wes_hook_symmetry_reveal");
+  } finally {
+    rmSync(tempHome, { recursive: true, force: true });
+  }
 });

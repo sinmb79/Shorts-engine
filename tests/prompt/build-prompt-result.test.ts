@@ -11,6 +11,9 @@ import { resolveLearningState } from "../../src/learning/resolve-learning-state.
 import { scoreRequest } from "../../src/domain/score-request.js";
 import { routeRequest } from "../../src/domain/route-request.js";
 import type { EngineRequest } from "../../src/domain/contracts.js";
+import { runScoreGate } from "../../src/quality/score-gate.js";
+import { resolveStyleResolution } from "../../src/style/style-engine.js";
+import { weaveScenarioPlan } from "../../src/scenario/block-weaver.js";
 import { loadFixture } from "../helpers/load-fixture.js";
 
 test("builds a structured prompt result for a standard request", async () => {
@@ -29,14 +32,31 @@ test("builds a structured prompt result for a standard request", async () => {
   );
   const scoring = scoreRequest(effectiveRequest);
   const routing = routeRequest(effectiveRequest, scoring);
+  const styleResolution = resolveStyleResolution(request, null);
+  const scenarioPlan = weaveScenarioPlan({
+    effectiveRequest,
+    platformOutputSpec,
+    styleResolution,
+    novelShortsPlan,
+  });
+  const qualityGate = runScoreGate({
+    effectiveRequest,
+    motionPlan,
+    platformOutputSpec,
+    scenarioPlan,
+    styleResolution,
+  });
   const promptResult = buildPromptResult({
     brollPlan,
     effectiveRequest,
     learningState,
     motionPlan,
     platformOutputSpec,
+    qualityGate,
     routing,
+    scenarioPlan,
     scoring,
+    styleResolution,
     novelShortsPlan,
   });
 
@@ -45,8 +65,9 @@ test("builds a structured prompt result for a standard request", async () => {
   assert.equal(promptResult.params.aspect_ratio, "9:16");
   assert.equal(promptResult.params.duration_sec, 20);
   assert.match(promptResult.main_prompt, /AI meeting note tool/);
+  assert.match(promptResult.main_prompt, /Scenario beat hook:/);
   assert.match(promptResult.main_prompt, /Hook motion: zoom_in/);
-  assert.equal(promptResult.quality_score, 0.61);
+  assert.ok(promptResult.quality_score >= 0.75);
 });
 
 test("uses novel override theme and duration in prompt result", async () => {
@@ -65,14 +86,31 @@ test("uses novel override theme and duration in prompt result", async () => {
   );
   const scoring = scoreRequest(effectiveRequest);
   const routing = routeRequest(effectiveRequest, scoring);
+  const styleResolution = resolveStyleResolution(request, null);
+  const scenarioPlan = weaveScenarioPlan({
+    effectiveRequest,
+    platformOutputSpec,
+    styleResolution,
+    novelShortsPlan,
+  });
+  const qualityGate = runScoreGate({
+    effectiveRequest,
+    motionPlan,
+    platformOutputSpec,
+    scenarioPlan,
+    styleResolution,
+  });
   const promptResult = buildPromptResult({
     brollPlan,
     effectiveRequest,
     learningState,
     motionPlan,
     platformOutputSpec,
+    qualityGate,
     routing,
+    scenarioPlan,
     scoring,
+    styleResolution,
     novelShortsPlan,
   });
 
@@ -80,4 +118,5 @@ test("uses novel override theme and duration in prompt result", async () => {
   assert.equal(promptResult.params.duration_sec, 25);
   assert.match(promptResult.style_descriptor, /cliffhanger/);
   assert.match(promptResult.main_prompt, /Novel highlight:/);
+  assert.match(promptResult.main_prompt, /Scenario summary:/);
 });

@@ -11,6 +11,7 @@ test("prints request analysis report in JSON", () => {
     recommended_backend?: string;
     warning_count?: number;
     readiness?: { render?: boolean; publish?: boolean };
+    quality_gate?: { overall_score?: number; pass?: boolean; weakest_dimensions?: string[] };
   };
 
   assert.equal(result.exitCode, 0);
@@ -18,6 +19,8 @@ test("prints request analysis report in JSON", () => {
   assert.equal(parsed.recommended_backend, "local");
   assert.equal(parsed.readiness?.render, true);
   assert.equal(parsed.readiness?.publish, true);
+  assert.equal(parsed.quality_gate?.pass, true);
+  assert.equal(typeof parsed.quality_gate?.overall_score, "number");
   assert.equal(typeof parsed.request_id, "string");
   assert.equal(typeof parsed.warning_count, "number");
 });
@@ -27,5 +30,6 @@ test("prints short human-readable analysis summary", () => {
 
   assert.equal(result.exitCode, 0);
   assert.match(result.stdout, /Recommended backend: local/);
+  assert.match(result.stdout, /Quality gate: pass/);
   assert.match(result.stdout, /Warnings: \d+/);
 });

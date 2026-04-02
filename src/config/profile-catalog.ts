@@ -140,6 +140,7 @@ export const SUPPORTED_COMMANDS = [
   "prompt",
   "create",
   "wizard",
+  "taste",
   "execute",
   "tts",
   "upload",
@@ -148,6 +149,10 @@ export const SUPPORTED_COMMANDS = [
   "analyze",
   "render",
   "publish",
+  "feedback",
+  "quality",
+  "format",
+  "interactive",
 ];
 
 export function getProfileCatalog(): RequestProfile[] {
